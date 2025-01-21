@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -18,15 +18,16 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { signUpSchema } from "@/lib/validate";
-import { signUp } from "@/lib/action/auth";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const router = useRouter()
+  const router = useRouter();
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -36,21 +37,50 @@ export function SignupForm({
     },
   });
 
-  async function onSubmit(values: z.infer<typeof signUpSchema>) {
-    const result = await signUp(values);
-
-    if(result.success) {
-      toast.success('Success', {
-        description: 'You have successfully signed up.'
-      })
-      
+  const mutation = useMutation({
+    mutationFn: async (
+      data: Pick<AuthCredentials, "email" | "fullName" | "password">
+    ): Promise<AuthCredentials> => {
+      const response = await axios.post("/api/signup", data);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message)
+      console.log("Being redirect even not success")
       router.push('/upload')
-    } else {
-      toast.error('Error signing up', {
-        description: 'An error occured'
-      })
+    },
+    onError: (error) => {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorMessage = error.response.data.message
+        toast.error(errorMessage);
+        console.log("Not Being redirect:", errorMessage);
+
+        if(errorMessage.includes('Email')) {
+          form.setError('email', {
+            type: 'server',
+            message: errorMessage
+          }) 
+        } else if (errorMessage.includes("Password")) {
+          form.setError("password", {
+            type: "server",
+            message: errorMessage
+          });
+        } else {
+          form.setError("email", {
+            type: "server",
+            message: errorMessage
+          });
+          form.setError("password", {
+            type: "server",
+            message: errorMessage
+          });
+        }
+      }
     }
-    
+  });
+
+  function onSubmit(values: z.infer<typeof signUpSchema>) {
+    mutation.mutate(values)
   }
 
   return (
@@ -74,10 +104,7 @@ export function SignupForm({
                       <FormItem>
                         <FormLabel>Full Name</FormLabel>
                         <FormControl>
-                          <Input
-                            type="text"
-                            {...field}
-                          />
+                          <Input type="text" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -111,17 +138,18 @@ export function SignupForm({
                       <FormItem>
                         <FormLabel>Password</FormLabel>
                         <FormControl>
-                          <Input
-                            type="password"
-                            {...field}
-                          />
+                          <Input type="password" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
                 </div>
-                <Button type="submit" className="w-full">
+                <Button 
+                  type="submit" 
+                  className="w-full"
+                  disabled={mutation.isPending}
+                >
                   Sign Up
                 </Button>
                 <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">

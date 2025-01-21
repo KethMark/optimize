@@ -19,15 +19,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { signInSchema } from "@/lib/validate";
-import { signInWithCredentials } from "@/lib/action/auth";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const router = useRouter()
+  const router = useRouter();
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -36,20 +37,50 @@ export function LoginForm({
     },
   });
 
-  async function onSubmit(values: z.infer<typeof signInSchema>) {
-    const result = await signInWithCredentials(values);
+  const mutation = useMutation({
+    mutationFn: async (
+      data: Pick<AuthCredentials, "email" | "password">
+    ): Promise<AuthCredentials> => {
+      const response = await axios.post("/api/signin", data);
+      return response.data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      console.log("Being redirect even not success");
+      router.push("/upload");
+    },
+    onError: (error) => {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorMessage = error.response.data.message
+        toast.error(errorMessage);
+        console.log("Not Being redirect:", errorMessage);
 
-    if(result.success) {
-      toast.success('Success', {
-        description: 'You have successfully signed in.'
-      })
-      
-      router.push('/upload')
-    } else {
-      toast.error('Error signing in', {
-        description: 'An error occured'
-      })
-    }
+        if(errorMessage.includes('Email')) {
+          form.setError('email', {
+            type: 'server',
+            message: errorMessage
+          }) 
+        } else if (errorMessage.includes("Password")) {
+          form.setError("password", {
+            type: "server",
+            message: errorMessage
+          });
+        } else {
+          form.setError("email", {
+            type: "server",
+            message: errorMessage
+          });
+          form.setError("password", {
+            type: "server",
+            message: errorMessage
+          });
+        }
+      }
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof signInSchema>) {
+    mutation.mutate(values);
   }
 
   return (
@@ -107,7 +138,11 @@ export function LoginForm({
                     )}
                   />
                 </div>
-                <Button type="submit" className="w-full">
+                <Button 
+                  type="submit" 
+                  className="w-full"
+                  disabled={mutation.isPending}
+                >
                   Login
                 </Button>
                 <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">

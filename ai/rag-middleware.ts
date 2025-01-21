@@ -1,0 +1,106 @@
+import { db } from "@/db/index";
+import { documents } from "@/db/schema";
+import { cosineDistance, desc, eq, gt, sql, and } from "drizzle-orm";
+import { groq } from "@ai-sdk/groq";
+import {
+  embed,
+  generateObject,
+  generateText,
+  Experimental_LanguageModelV1Middleware as LanguageModelV1Middleware,
+} from "ai";
+import { z } from "zod";
+import { cohere } from "@ai-sdk/cohere";
+
+const selectionSchema = z.object({
+  files: z.object({
+    chatId: z.string(),
+  }),
+});
+
+export const Middleware: LanguageModelV1Middleware = {
+  transformParams: async ({ params }) => {
+    const { prompt: messages, providerMetadata } = params;
+
+    const { success, data } = selectionSchema.safeParse(providerMetadata);
+
+    if (!success) {
+      return params;
+    }
+
+    const documentsId = data.files.chatId;
+
+    const recentMessage = messages.pop();
+
+    if (!recentMessage || recentMessage.role !== "user") {
+      if (recentMessage) {
+        messages.push(recentMessage);
+      }
+      return params;
+    }
+
+    const lastUserMessageContent = recentMessage.content
+      .filter((content) => content.type === "text")
+      .map((content) => content.text)
+      .join("\n");
+
+    const { object: classification } = await generateObject({
+      model: groq("llama-3.3-70b-versatile"),
+      output: "enum",
+      enum: ["question", "statement", "other"],
+      system: "classify the user message as a question, statement, or other",
+      prompt: lastUserMessageContent,
+    });
+
+    if (classification !== "question") {
+      console.log("Not equal to question");
+      messages.push(recentMessage);
+      return params;
+    }
+
+    const { text: hypotheticalAnswer } = await generateText({
+      model: groq("llama-3.3-70b-versatile"),
+      system: "Answer the user question:",
+      prompt: lastUserMessageContent,
+    });
+
+    const { embedding: hypotheticalAnswerEmbedding } = await embed({
+      model: cohere.embedding("embed-english-v3.0"),
+      value: hypotheticalAnswer,
+    });
+
+    const similarity = sql<number>`1 - (${cosineDistance(
+      documents.embedding,
+      hypotheticalAnswerEmbedding
+    )})`;
+
+    const similarGuides = await db
+      .select({ name: documents.content, similarity })
+      .from(documents)
+      .where(and(gt(similarity, 0.5), eq(documents.file_storage, documentsId)))
+      .orderBy((t) => desc(t.similarity))
+      .limit(6);
+
+    console.log("I'm done similar Guides", similarGuides);
+
+    messages.push({
+      role: "user",
+      content: [
+        ...recentMessage.content,
+        {
+          type: "text",
+          text: "Here is some relevant information that you can use to answer the question:",
+        },
+        ...similarGuides.map((document) => ({
+          type: "text" as const,
+          text: document.name,
+        })),
+        {
+          type: "text",
+          text: `If no retrieve documents are found, respond politely with: "'I'm sorry, but I can't assist with your question at the moment!. Plss try an specific question."`,
+        },
+      ],
+    });
+
+    return { ...params, prompt: messages };
+  },
+};

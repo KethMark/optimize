@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import { SessionProvider } from "next-auth/react"
+import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+import TanstackQuery from "@/components/tanstack";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,16 +27,20 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await auth()
-  
+  const session = await auth();
+
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <SessionProvider session={session}>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          {children}
-          <Toaster />
+          <ThemeProvider attribute="class" defaultTheme="system">
+            <TanstackQuery>
+              {children}
+              <Toaster />
+            </TanstackQuery>
+          </ThemeProvider>
         </body>
       </SessionProvider>
     </html>
