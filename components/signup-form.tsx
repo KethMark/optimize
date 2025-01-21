@@ -47,7 +47,7 @@ export function SignupForm({
     onSuccess: (data) => {
       toast.success(data.message)
       console.log("Being redirect even not success")
-      router.push('/upload')
+      router.push('/signin')
     },
     onError: (error) => {
       if (axios.isAxiosError(error) && error.response?.data) {
