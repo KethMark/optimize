@@ -113,7 +113,7 @@ export function AppSidebar({chatId, ...props }: React.ComponentProps<typeof Side
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser/>
+        <NavUser profile={Profile} mutate={mutate}/>
       </SidebarFooter>
     </Sidebar>
   )

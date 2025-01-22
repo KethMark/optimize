@@ -14,13 +14,19 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { UseMutateFunction } from "@tanstack/react-query";
 import { ChevronsUpDown, LogOut } from "lucide-react";
-import { signOut, useSession } from "next-auth/react";
 
-export function NavUser() {
-  const { isMobile } = useSidebar();
-
-  const { data: session } = useSession();
+export function NavUser({
+  profile,
+  mutate
+}: {
+  profile: ProfileData | undefined,
+  mutate: UseMutateFunction<void, Error, void, unknown>
+}) {
+  const { isMobile } = useSidebar()
+  const data = profile?.profileUser
+  const avatar = profile?.avatarProfile
 
   return (
     <SidebarMenu>
@@ -32,17 +38,12 @@ export function NavUser() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage
-                  src={session?.user?.image ?? ""}
-                  alt={session?.user?.name ?? ""}
-                />
-                <AvatarFallback className="rounded-lg">OP</AvatarFallback>
+                <AvatarImage src={avatar} alt={data?.fullName} />
+                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">
-                  {session?.user?.name}
-                </span>
-                <span className="truncate text-xs">{session?.user?.email}</span>
+                <span className="truncate font-semibold">{data?.fullName}</span>
+                <span className="truncate text-xs">{data?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -53,15 +54,9 @@ export function NavUser() {
             align="end"
             sideOffset={4}
           >
-            <DropdownMenuLabel className="p-0 font-normal"></DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={(e) => {
-                e.preventDefault();
-                signOut({
-                  callbackUrl: `${window.location.origin}/`,
-                });
-              }}
-            >
+            <DropdownMenuLabel className="p-0 font-normal">
+            </DropdownMenuLabel>
+            <DropdownMenuItem onClick={() => mutate()}>
               <LogOut />
               Log out
             </DropdownMenuItem>
@@ -69,5 +64,5 @@ export function NavUser() {
         </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
-  );
+  )
 }

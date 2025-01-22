@@ -19,7 +19,7 @@ interface DeletePDF  {
 };
 
 interface ProfileUser  {
-  fullname: string;
+  fullName: string;
   email: string;
 };
 
