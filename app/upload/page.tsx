@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { AppSidebar } from '@/components/sidebar';
 import { ModeToggle } from '@/components/theme';
+import { Uploads } from '@/components/upload';
 
 const page = async () => {
   const session = await auth()
@@ -30,7 +31,7 @@ const page = async () => {
             <ModeToggle />
           </div>
         </header>
-        {/** data */}
+        <Uploads/>
       </SidebarInset>
     </SidebarProvider>
   )

@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axios from "axios"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
-import { Command, LifeBuoy, Send } from "lucide-react"
+import { LifeBuoy, Send, SparklesIcon } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -72,7 +72,7 @@ export function AppSidebar({chatId, ...props }: React.ComponentProps<typeof Side
     queryFn: async (): Promise<ProfileData> => {
       const response = await axios.get('/api/profile')
       return response.data
-    },
+    }
   })
 
   const { mutate } = useMutation({
@@ -81,6 +81,7 @@ export function AppSidebar({chatId, ...props }: React.ComponentProps<typeof Side
     },
     onSuccess: () => {
       router.push('/')
+      router.refresh() 
     }
   })
 
@@ -92,11 +93,11 @@ export function AppSidebar({chatId, ...props }: React.ComponentProps<typeof Side
             <SidebarMenuButton size="lg" asChild>
               <a href="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Command className="size-4" />
-                </div>
+                  <SparklesIcon className="size-4"/>                                                
+                </div>                                                                          
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Acme Inc</span>
-                  <span className="truncate text-xs">Enterprise</span>
+                  <span className="truncate font-semibold">Comp Scie</span>
+                  <span className="truncate text-xs">Optimization</span>
                 </div>
               </a>
             </SidebarMenuButton>

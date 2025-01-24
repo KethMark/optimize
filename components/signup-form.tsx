@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Github } from "lucide-react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -22,6 +21,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { Icon } from "./ui/icon";
 
 export function SignupForm({
   className,
@@ -158,7 +158,7 @@ export function SignupForm({
                   </span>
                 </div>
                 <Button variant="outline" className="w-full">
-                  <Github className="mr-2 h-4 w-4" />
+                  <Icon.Github className="mr-2 h-4 w-4" />
                   Sign up with GitHub
                 </Button>
                 <div className="text-center text-sm">

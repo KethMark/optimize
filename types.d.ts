@@ -12,6 +12,10 @@ interface documentsList {
   fileName: string;
 }
 
+interface documents {
+  document: Documents;
+}
+
 interface DeletePDF  {
   id: string;
   fileName: string;
@@ -31,3 +35,10 @@ interface ProfileData {
 interface ChatId {
   chatId?: string
 }
+
+interface UploadPDFParams  {
+  id: string;
+  fileUrl: string;
+  fileName: string;
+  Message: string;
+};

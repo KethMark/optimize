@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Github } from "lucide-react";
 import Link from "next/link";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -23,6 +22,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { Icon } from "./ui/icon";
 
 export function LoginForm({
   className,
@@ -118,12 +118,12 @@ export function LoginForm({
                 <div className="grid gap-2">
                   <div className="flex items-center">
                     <Label htmlFor="password">Password</Label>
-                    <a
-                      href="#"
+                    <Link
+                      href="/forget-password"
                       className="ml-auto text-sm underline-offset-2 hover:underline"
                     >
                       Forgot your password?
-                    </a>
+                    </Link>
                   </div>
                   <FormField
                     control={form.control}
@@ -151,7 +151,7 @@ export function LoginForm({
                   </span>
                 </div>
                 <Button variant="outline" className="w-full">
-                  <Github className="mr-2 h-4 w-4" />
+                  <Icon.Github className="mr-2 h-4 w-4" />
                   Login with GitHub
                 </Button>
                 <div className="text-center text-sm">

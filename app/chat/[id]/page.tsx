@@ -1,14 +1,65 @@
 import { auth } from '@/auth'
+import { ChatInterface } from '@/components/chat'
+import { AppSidebar } from '@/components/sidebar'
+import { ModeToggle } from '@/components/theme'
+import { Separator } from '@/components/ui/separator'
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import { db } from '@/db/index'
+import { fileStorage, users } from '@/db/schema'
+import { and, eq } from 'drizzle-orm'
+import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import React from 'react'
 
-const page = async () => {
+const page = async ({
+  params
+}:{
+  params: Promise<{id: string}>
+}) => {
   const session = await auth()
+  const { id } = await params
 
-  if(!session) redirect('/signin')
+  if (
+    !session || 
+    !session.user ||
+    !session.user.id
+  ) redirect('/signin')
+
+  const [profile] = await db
+    .select({id: users.id})
+    .from(users)
+    .where(eq(users.id, session.user.id))
+
+  const document = await db
+    .select()
+    .from(fileStorage)
+    .where(and(eq(fileStorage.id, id), eq(fileStorage.users, profile.id)))
+
+  const documents = document[0]
     
   return (
-    <div>page</div>
+    <SidebarProvider>
+      <AppSidebar chatId={id} />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center px-4">
+          <div className="flex items-center gap-2">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Link href="/upload">Back</Link>
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <span className="font-bold truncate max-w-[20ch] sm:max-w-[40ch] md:max-w-96">
+              {documents.fileName}
+            </span>
+          </div>
+          <div className="ml-auto">
+            <ModeToggle />
+          </div>
+        </header>
+        <div>
+          <ChatInterface document={documents} />
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }
 

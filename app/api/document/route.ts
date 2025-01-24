@@ -20,15 +20,11 @@ export async function GET() {
     .from(users)
     .where(eq(users.id, data.user.id))
 
-  if(!profile || !profile[0].id) {
-    return NextResponse.json({error: 'Profile not found'})
-  }
-
   const documents = await db
     .select()
     .from(fileStorage)
     .where(eq(fileStorage.users, profile[0].id))
-    .orderBy(desc(fileStorage.users))
+    .orderBy(desc(fileStorage.createdAt))
 
   return NextResponse.json(documents)
 }
