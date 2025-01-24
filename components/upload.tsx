@@ -73,6 +73,8 @@ export const Uploads = () => {
       if(axios.isAxiosError(error) && error.response?.data) {
         const errorMessage = error.response.data.message
         toast.error(errorMessage)
+      } else {
+        toast.error('Something Wrong..')
       }
     },
     onSettled: () => {
