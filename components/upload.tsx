@@ -12,7 +12,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 export const Uploads = () => {
-  const supabase = createClient();
+  const supabase = createClient();                    //Magamit nato ag embedding sa production kaso dapat dli mo exist sa limit sa free kay mo error siya!
   const queryClient = useQueryClient();
   const router = useRouter();
   const [supabaseProgress, supabaseUploadProgress] = useState<number>(0);

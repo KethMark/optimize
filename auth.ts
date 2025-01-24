@@ -20,7 +20,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: "jwt",
   },
   providers: [
-    Github,
+    Github({
+      clientId: process.env.AUTH_GITHUB_ID,
+      clientSecret: process.env.AUTH_GITHUB_SECRET,
+    }),
     CredentialsProvider({
       async authorize(credentials) {
         if (!credentials.email || !credentials.password) {

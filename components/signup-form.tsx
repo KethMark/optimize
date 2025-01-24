@@ -21,7 +21,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
-import { Icon } from "./ui/icon";
+import { GithubProvider } from "./github";
 
 export function SignupForm({
   className,
@@ -157,10 +157,7 @@ export function SignupForm({
                     Or continue with
                   </span>
                 </div>
-                <Button variant="outline" className="w-full">
-                  <Icon.Github className="mr-2 h-4 w-4" />
-                  Sign up with GitHub
-                </Button>
+                <GithubProvider/>
                 <div className="text-center text-sm">
                   Already have an account?{" "}
                   <Link href="/signin" className="underline underline-offset-4">
