@@ -3,7 +3,7 @@ import { embedMany } from "ai";
 import { cohere } from "@ai-sdk/cohere";
 import { auth } from "@/auth";
 import { db } from "@/db/index";
-import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters"
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 import { documents, fileStorage, users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -13,36 +13,29 @@ const embeddingModel = cohere.embedding("embed-english-v3.0", {
 });
 
 export async function POST(req: Request) {
-  const { fileUrl, fileName } = await req.json()
+  const { fileUrl, fileName } = await req.json();
 
-  const session = await auth()
-  
-  if (
-    !session || 
-    !session.user || 
-    !session.user.id
-  ) {
-    return NextResponse.json("You must logged in")
+  const session = await auth();
+
+  if (!session || !session.user || !session.user.id) {
+    return NextResponse.json({ message: "You don't have session "});
   }
 
   const user = await db
     .select()
     .from(users)
-    .where(eq(users.id, session.user.id))
+    .where(eq(users.id, session.user.id));
 
-  if (
-    !user || 
-    !user[0].id
-  ) {
-    return NextResponse.json('User not found')
+  if (!user || !user[0].id) {
+    return NextResponse.json({ message: "User not found"});
   }
 
   const data = await db
     .insert(fileStorage)
     .values({ fileUrl, fileName, users: user[0].id })
-    .returning()
+    .returning();
 
-  const fileStorageId = data[0].id
+  const fileStorageId = data[0].id;
 
   const response = await fetch(fileUrl);
   const buffer = await response.blob();

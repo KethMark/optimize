@@ -63,15 +63,17 @@ export const Uploads = () => {
     },
     onMutate: () => {
       toast.loading(`Preparing your document file...`, {
-        position: "bottom-right",
       });
     },
     onSuccess: (data) => {
       router.push(`/chat/${data.id}`);
       queryClient.invalidateQueries({ queryKey: ["DocumentList"] });
     },
-    onError: () => {
-      toast.error("Something went wrong");
+    onError: (error) => {
+      if(axios.isAxiosError(error) && error.response?.data) {
+        const errorMessage = error.response.data.message
+        toast.error(errorMessage)
+      }
     },
     onSettled: () => {
       toast.dismiss();
