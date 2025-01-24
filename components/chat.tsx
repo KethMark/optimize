@@ -22,7 +22,7 @@ import { Viewer, Worker } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
-const suggestedActions = [   //Much better siguro if information nlng kaysa suggestion?
+const suggestedActions = [   //Much better siguro if information nlng kaysa suggestion? //Github login i fix
   {
     title: "What is the summary of these documents?",
     action: "what is the summary of these documents?",
