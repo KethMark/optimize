@@ -1,18 +1,19 @@
 
 import { auth } from "@/auth";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import Footer from "@/components/(landingpage)/footer";
+import Hero from "@/components/(landingpage)/hero";
+import { Navigation } from "@/components/(landingpage)/navbar";
 
 export default async function Home() {
   const authUser = await auth()
 
   return (
-    <div className="flex items-center h-screen justify-center">
-      <Link href='/upload'>
-        <Button>
-          {authUser? 'Upload' : 'Login'}
-        </Button>
-      </Link>
+    <div className="min-h-screen scroll-auto selection:bg-orange-100 selection:text-orange-700 dark:bg-gray-950">
+      <Navigation/>
+      <main className="flex flex-col overflow-hidden">
+        <Hero/>
+      </main>
+      <Footer/>
     </div>
   );
 }

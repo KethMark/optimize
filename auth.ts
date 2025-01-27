@@ -2,6 +2,7 @@ import NextAuth, { CredentialsSignin, User } from "next-auth";
 import Github from "next-auth/providers/github";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "./db/index";
+import { DrizzleAdapter } from "@auth/drizzle-adapter"
 import { users } from "./db/schema";
 import { eq } from "drizzle-orm";
 import { compare } from "bcryptjs";
@@ -16,6 +17,7 @@ export class CustomError extends CredentialsSignin {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  adapter: DrizzleAdapter(db),
   session: {
     strategy: "jwt",
   },
@@ -27,7 +29,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     CredentialsProvider({
       async authorize(credentials) {
         if (!credentials.email || !credentials.password) {
-          throw new CustomError('Invalid Credentials Account');
+          throw new CustomError("Invalid Credentials Account");
         }
 
         const user = await db
@@ -37,16 +39,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           .limit(1);
 
         if (user.length === 0) {
-          throw new CustomError('Invalid Email Account');
+          throw new CustomError("Invalid Email Account");
         }
 
         const isPasswordValid = await compare(
           credentials.password.toString(),
-          user[0].password
+          user[0].password ?? ''
         );
 
         if (!isPasswordValid) {
-          throw new CustomError('Invalid Password Account');
+          throw new CustomError("Invalid Password Account");
         }
 
         return {
@@ -62,19 +64,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
+      console.log(token)
       if (user) {
         token.id = user.id;
         token.name = user.name;
       }
       return token;
     },
-    async session({ session, token}) {
-      if(session.user) {
+    async session({ session, token }) {
+      if (session.user) {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
       }
-
-      return session
-    }
+      return session;
+    },
   },
-})
+});

@@ -9,7 +9,6 @@ import {
 import Link from 'next/link';
 import { Separator } from '@/components/ui/separator';
 import { AppSidebar } from '@/components/sidebar';
-import { ModeToggle } from '@/components/theme';
 import { Uploads } from '@/components/upload';
 
 const page = async () => {
@@ -26,9 +25,6 @@ const page = async () => {
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Link href="/">Back</Link>
-          </div>
-          <div className="ml-auto">
-            <ModeToggle />
           </div>
         </header>
         <Uploads/>

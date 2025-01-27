@@ -1,7 +1,6 @@
 import { auth } from '@/auth'
 import { ChatInterface } from '@/components/chat'
 import { AppSidebar } from '@/components/sidebar'
-import { ModeToggle } from '@/components/theme'
 import { Separator } from '@/components/ui/separator'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import { db } from '@/db/index'
@@ -50,9 +49,6 @@ const page = async ({
             <span className="font-bold truncate max-w-[20ch] sm:max-w-[40ch] md:max-w-96">
               {documents.fileName}
             </span>
-          </div>
-          <div className="ml-auto">
-            <ModeToggle />
           </div>
         </header>
         <div>
