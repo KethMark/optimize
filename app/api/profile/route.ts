@@ -16,11 +16,9 @@ export async function GET() {
   }
 
   const [res] = await db
-    .select({fullName: users.fullName, email: users.email})
+    .select({name: users.name, email: users.email, image: users.image})
     .from(users)
     .where(eq(users.id, user.user.id));
 
-  const image = user.user.image
-
-  return NextResponse.json({ profileUser: res, avatarProfile: image })
+  return NextResponse.json(res)
 }

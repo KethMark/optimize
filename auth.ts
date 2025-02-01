@@ -1,11 +1,12 @@
-import NextAuth, { CredentialsSignin, User } from "next-auth";
+import NextAuth, { CredentialsSignin, type DefaultSession } from "next-auth";
 import Github from "next-auth/providers/github";
-import CredentialsProvider from "next-auth/providers/credentials";
+import Credentials from "next-auth/providers/credentials";
 import { db } from "./db/index";
-import { DrizzleAdapter } from "@auth/drizzle-adapter"
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { users } from "./db/schema";
 import { eq } from "drizzle-orm";
 import { compare } from "bcryptjs";
+import { signInSchema } from "./lib/validate";
 
 export class CustomError extends CredentialsSignin {
   constructor(code: string) {
@@ -13,6 +14,14 @@ export class CustomError extends CredentialsSignin {
     this.code = code;
     this.message = code;
     this.stack = undefined;
+  }
+}
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      role: string;
+    } & DefaultSession["user"];
   }
 }
 
@@ -26,9 +35,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       clientId: process.env.AUTH_GITHUB_ID,
       clientSecret: process.env.AUTH_GITHUB_SECRET,
     }),
-    CredentialsProvider({
+    Credentials({
       async authorize(credentials) {
-        if (!credentials.email || !credentials.password) {
+        if(!credentials.email || !credentials.password) {
           throw new CustomError("Invalid Credentials Account");
         }
 
@@ -36,26 +45,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           .select()
           .from(users)
           .where(eq(users.email, credentials.email.toString()))
-          .limit(1);
+          .limit(1)
 
-        if (user.length === 0) {
-          throw new CustomError("Invalid Email Account");
+        if(user.length === 0) {
+          throw new CustomError("Invalid Email Account")
         }
 
         const isPasswordValid = await compare(
           credentials.password.toString(),
           user[0].password ?? ''
-        );
+        )
 
-        if (!isPasswordValid) {
-          throw new CustomError("Invalid Password Account");
+        if(!isPasswordValid) {
+          throw new CustomError("Invalid Password Account")
         }
 
-        return {
-          id: user[0].id.toString(),
-          email: user[0].email,
-          name: user[0].fullName,
-        } as User;
+        return user[0]
       },
     }),
   ],
@@ -64,19 +69,26 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      console.log(token)
       if (user) {
         token.id = user.id;
-        token.name = user.name;
+        token.name = user.name; 
+        const existingUser = await db
+          .select()
+          .from(users)
+          .where(eq(users.id, user.id as string))
+
+        token.role = existingUser[0].role
       }
+      
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
+        session.user.role = token.role as string;
       }
-      return session;
+      return session
     },
   },
 });

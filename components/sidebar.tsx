@@ -1,10 +1,10 @@
-'use client'
+"use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import axios from "axios"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
-import { LifeBuoy, Send, SparklesIcon } from "lucide-react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { LifeBuoy, Send, SparklesIcon } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -13,10 +13,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar"
-import { NavSecondary } from "./nav-secondary"
-import { NavUser } from "./nav-user"
-import { NavMain } from "./nav-main"
+} from "@/components/ui/sidebar";
+import { NavSecondary } from "./nav-secondary";
+import { NavUser } from "./nav-user";
+import { NavMain } from "./nav-main";
+import { Icon } from "./ui/icon";
 
 const data = {
   navSecondary: [
@@ -31,59 +32,63 @@ const data = {
       icon: Send,
     },
   ],
-}
+};
 
-export function AppSidebar({chatId, ...props }: React.ComponentProps<typeof Sidebar> & ChatId) {
-  const queryClient = useQueryClient()
+export function AppSidebar({
+  chatId,
+  ...props
+}: React.ComponentProps<typeof Sidebar> & ChatId) {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const { data: ListDocument, isLoading } = useQuery({
-    queryKey: ['DocumentList'],
+    queryKey: ["DocumentList"],
     queryFn: async (): Promise<documentsList[]> => {
-      const response = await axios.get('/api/document')
-      return response.data
-    }
-  })
+      const response = await axios.get("/api/document");
+      return response.data;
+    },
+  });
 
   const { mutateAsync } = useMutation({
-    mutationFn: async (data: Pick<DeletePDF, "fileName" | "id">):
-    Promise<DeletePDF> => {
-      const response = await axios.delete('/api/delete', {
+    mutationFn: async (
+      data: Pick<DeletePDF, "fileName" | "id">
+    ): Promise<DeletePDF> => {
+      const response = await axios.delete("/api/delete", {
         data: {
           id: data.id,
           fileName: data.fileName,
-        }
-      })
-      return response.data
+        },
+      });
+      return response.data;
     },
-    onMutate: (data) =>{
-      toast.loading(`Deleting ${data.fileName}..`)
+    onMutate: (data) => {
+      toast.loading(`Deleting ${data.fileName}..`);
     },
     onSuccess: (data) => {
-      ListDocument?.filter((docs: documentsList) => docs.id !== data.id)
+      ListDocument?.filter((docs: documentsList) => docs.id !== data.id);
       queryClient.invalidateQueries({ queryKey: ["DocumentList"] });
-      toast.success(data.text)
-      toast.dismiss()
-      router.push('/upload')
-    }
-  })
+      toast.success(data.text);
+      toast.dismiss();
+      router.push("/upload");
+    },
+  });
 
   const { data: Profile } = useQuery({
-    queryKey: ['Profile'],
-    queryFn: async (): Promise<ProfileData> => {
-      const response = await axios.get('/api/profile')
-      return response.data
-    }
-  })
+    queryKey: ["Profile"],
+    queryFn: async (): Promise<profileUser> => {
+      const response = await axios.get("/api/profile");
+      return response.data;
+    },
+  });
 
   const { mutate } = useMutation({
     mutationFn: async () => {
-      await axios.delete('/api/signout').then((res) => res.data)
+      await axios.delete("/api/signout").then((res) => res.data);
     },
     onSuccess: () => {
-      router.push('/')
-      router.refresh() 
-    }
-  })
+      router.push("/");
+      router.refresh();
+    },
+  });
 
   return (
     <Sidebar variant="inset" {...props}>
@@ -92,9 +97,9 @@ export function AppSidebar({chatId, ...props }: React.ComponentProps<typeof Side
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <a href="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <SparklesIcon className="size-4"/>                                                
-                </div>                                                                          
+                <div className="flex aspect-square size-8 items-center justify-center rounded-lg ">
+                  <Icon.Optimize/>
+                </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">Comp Scie</span>
                   <span className="truncate text-xs">Optimization</span>
@@ -105,8 +110,8 @@ export function AppSidebar({chatId, ...props }: React.ComponentProps<typeof Side
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain 
-          listDocument={ListDocument} 
+        <NavMain
+          listDocument={ListDocument}
           isLoading={isLoading}
           mutateAsync={mutateAsync}
           chatId={chatId}
@@ -114,8 +119,8 @@ export function AppSidebar({chatId, ...props }: React.ComponentProps<typeof Side
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser profile={Profile} mutate={mutate}/>
+        <NavUser profile={Profile} mutate={mutate} />
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }

@@ -17,7 +17,7 @@ export const GithubProvider = () => {
         setLoading(true);
         try {
           await signIn("github", {
-            callbackUrl: "/session",
+            callbackUrl: "/upload",
           });
         } catch (error) {
           console.error("Error during sign-in:", error);

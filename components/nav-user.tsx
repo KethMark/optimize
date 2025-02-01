@@ -21,13 +21,11 @@ export function NavUser({
   profile,
   mutate
 }: {
-  profile: ProfileData | undefined,
+  profile: profileUser | undefined
   mutate: UseMutateFunction<void, Error, void, unknown>
 }) {
   const { isMobile } = useSidebar()
-  const data = profile?.profileUser
-  const avatar = profile?.avatarProfile
-
+ 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -38,12 +36,12 @@ export function NavUser({
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={avatar} alt={data?.fullName} />
+                <AvatarImage src={profile?.image} alt={profile?.name} />
                 <AvatarFallback className="rounded-lg">CN</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-semibold">{data?.fullName}</span>
-                <span className="truncate text-xs">{data?.email}</span>
+                <span className="truncate font-semibold">{profile?.name}</span>
+                <span className="truncate text-xs">{profile?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>

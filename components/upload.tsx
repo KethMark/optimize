@@ -2,8 +2,8 @@
 
 import React, { useCallback, useState } from "react";
 import { Input } from "./ui/input";
-import { useDropzone } from "react-dropzone"
-import { Loader, Upload } from "lucide-react";
+import { useDropzone } from "react-dropzone";
+import { CircleX, File } from "lucide-react";
 import { Progress } from "./ui/progress";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -12,11 +12,15 @@ import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 export const Uploads = () => {
-  const supabase = createClient();                    //Magamit nato ag embedding sa production kaso dapat dli mo exist sa limit sa free kay mo error siya!
+  const supabase = createClient();
   const queryClient = useQueryClient();
   const router = useRouter();
   const [supabaseProgress, supabaseUploadProgress] = useState<number>(0);
   const [isSupaUploading, setSupaIsUploading] = useState(false);
+  const [uploadFileName, setUploadFileName] = useState<string | null>(null);
+  const [uploadFileSize, setUploadFileSize] = useState<number | null>(null);
+  const [abortController, setAbortController] =
+    useState<AbortController | null>(null);
 
   const uploadFileToSupabase = async (file: File) => {
     setSupaIsUploading(true);
@@ -27,6 +31,8 @@ export const Uploads = () => {
     formData.append("cacheControl", "3600");
     formData.append("file", blob);
 
+    const controller = new AbortController();
+    setAbortController(controller);
     return axios
       .post(
         `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/project/${fileName}`,
@@ -43,6 +49,7 @@ export const Uploads = () => {
             console.log(_progress);
             supabaseUploadProgress(_progress);
           },
+          signal: controller.signal,
         }
       )
       .then((res) => res.data.Key)
@@ -62,19 +69,18 @@ export const Uploads = () => {
       return res.data;
     },
     onMutate: () => {
-      toast.loading(`Preparing your document file...`, {
-      });
+      toast.loading(`Preparing your document files....`);
     },
     onSuccess: (data) => {
       router.push(`/chat/${data.id}`);
       queryClient.invalidateQueries({ queryKey: ["DocumentList"] });
     },
     onError: (error) => {
-      if(axios.isAxiosError(error) && error.response?.data) {
-        const errorMessage = error.response.data.message
-        toast.error(errorMessage)
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorMessage = error.response.data.message;
+        toast.error(errorMessage);
       } else {
-        toast.error('Something Wrong..')
+        toast.error("Something Wrong..");
       }
     },
     onSettled: () => {
@@ -84,6 +90,12 @@ export const Uploads = () => {
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     for (const file of acceptedFiles) {
+      if (file.size > 1 * 1024 * 1024) {
+        toast.error("Uploaded file exceeds maximum size of 1 MB");
+        continue;
+      }
+      setUploadFileName(file.name);
+      setUploadFileSize(file.size / 1024 / 1024);
       const filePath = await uploadFileToSupabase(file);
       if (!filePath) return;
 
@@ -97,23 +109,19 @@ export const Uploads = () => {
       });
     }
   }, []);
-  
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
-    <div className="flex-grow p-4">
-      <div className="max-w-2xl mx-auto mt-32">
-        <h1 className="text-2xl font-bold mb-2">Upload Your files</h1>
-        <p className="text-muted-foreground mb-4">
-          Start to uploaded your pdf files.
-        </p>
-
-        <div
-          {...getRootProps()}
-          className={`border-2 border-dashed rounded-lg p-8 text-center mb-4 ${
-            isDragActive ? "border-primary" : "border-muted-foreground"
-          }`}
-        >
+    <div className="sm:mx-auto sm:max-w-lg w-full mt-32">
+      <h3 className="text-tremor-title font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
+        File Upload
+      </h3>
+      <div
+        {...getRootProps()}
+        className="mt-4 flex justify-center rounded-tremor-default border border-dashed border-gray-300 px-6 py-16 dark:border-dark-tremor-border"
+      >
+        <div>
           <Input
             {...getInputProps()}
             id="dropzone-file"
@@ -121,39 +129,65 @@ export const Uploads = () => {
             type="file"
             className="hidden"
           />
-          <div className="translate-x-1">
-            <Upload className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-            <p className="text-lg mb-2">Drag files</p>
+          <File
+            className="mx-auto h-12 w-12 text-tremor-content-subtle dark:text-dark-tremor-content"
+            aria-hidden={true}
+          />
+          <div className="mt-4 flex text-tremor-default leading-6 text-tremor-content-emphasis dark:text-dark-tremor-content-emphasis">
+            <p>Drag and drop or</p>
+            <label
+              htmlFor="file-upload-5"
+              className="relative cursor-pointer rounded-tremor-small pl-1 font-medium text-tremor-brand hover:underline hover:underline-offset-4 dark:text-dark-tremor-brand"
+            >
+              <span>choose file</span>
+            </label>
+            <p className="pl-1">to upload</p>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Click to upload files (files should be under 20 MB )
+          <p className="text-center text-tremor-label leading-5 text-tremor-content dark:text-dark-tremor-content">
+            PDF up to 1MB
           </p>
         </div>
-        <p className="text-center text-muted-foreground text-sm">
-          Note: Unfortunately, we're unable to process images embedded within
-          PDF files at this time.
-        </p>
       </div>
       {isSupaUploading && (
-        <div className="fixed bottom-10 right-10">
-          <div className="w-full max-w-80 border rounded-lg p-4 ">
-            <div className="flex items-center gap-3 mb-3">
-              <Loader className="h-4 w-4 animate-spin" />
-              <p className="text-sm 0">
-                Processing your document for search...{" "}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <Progress
-                value={supabaseProgress}
-                className="w-full max-w-60 ml-7"
-              />
-              <span className="ml-2 text-xs">
-                {Math.round(supabaseProgress)}%
-              </span>
+        <>
+          <h4 className="mt-6 text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+            In Progress
+          </h4>
+          <div className="mt-2">
+            <div className="block py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2.5">
+                  <File
+                    className="h-7 w-7 shrink-0 text-tremor-content dark:text-dark-tremor-content"
+                    aria-hidden={true}
+                  />
+                  <div>
+                    <p className="text-tremor-label font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong truncate max-w-md">
+                      {uploadFileName}
+                    </p>
+                    <p className="text-tremor-label text-tremor-content dark:text-dark-tremor-content">
+                      {uploadFileSize?.toFixed(2)} MB
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => abortController?.abort()}
+                  className="text-tremor-content-subtle hover:text-tremor-content dark:text-dark-tremor-content-subtle hover:dark:text-dark-tremor-content"
+                  aria-label="Cancel"
+                >
+                  <CircleX className="size-5 shrink-0" aria-hidden={true} />
+                </button>
+              </div>
+              <div className="mt-2 flex items-center space-x-3">
+                <Progress value={supabaseProgress} className="[&>*]:h-1.5" />
+                <span className="text-tremor-label text-tremor-content dark:text-dark-tremor-content">
+                  {Math.round(supabaseProgress)}%
+                </span>
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

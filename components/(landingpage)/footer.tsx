@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { DatabaseLogo } from "@/public/databaselogo";
 import ThemeSwitch from "./themeSwitch";
 import { ArrowUpRight } from "lucide-react";
+import { Icon } from "../ui/icon";
 
 const navigation = {
   product: [
@@ -36,10 +36,11 @@ export default function Footer() {
       <div className="mx-auto max-w-6xl px-3 pb-8 pt-16 sm:pt-24 lg:pt-32">
         <div className="xl:grid xl:grid-cols-3 xl:gap-20">
           <div className="space-y-8">
-            <DatabaseLogo className="w-32 sm:w-40" />
+            <Icon.OptimizeLogo className="w-32 sm:w-40" />
             <p className="text-sm leading-6 text-gray-600 dark:text-gray-400">
-              Redefining the way databases are built and managed. Built in
-              Switzerland, made for the world.
+              Redefining the way you interact in your pdf. with the help
+              of evolving technology we can assure the quality and 
+              performance with the name itself.
             </p>
             <div className="flex space-x-6">
               <ThemeSwitch />
@@ -179,7 +180,7 @@ export default function Footer() {
         </div>
         <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-gray-200 pt-8 sm:mt-20 sm:flex-row lg:mt-24 dark:border-gray-800">
           <p className="text-sm leading-5 text-gray-500 dark:text-gray-400">
-            &copy; {new Date().getFullYear()} Database, Inc. All rights
+            &copy; 2023 Optimize, Inc. All rights
             reserved.
           </p>
           <div className="rounded-full border border-gray-200 py-1 pl-1 pr-2 dark:border-gray-800">

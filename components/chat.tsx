@@ -22,20 +22,20 @@ import { Viewer, Worker } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 
-const suggestedActions = [   //Much better siguro if information nlng kaysa suggestion? //Github login i fix
-  {
-    title: "What is the summary of these documents?",
-    action: "what is the summary of these documents?",
-  },
-  {
-    title: "Who is the author of these documents?",
-    action: "who is the author of these documents?",
-  },
-  {
-    title: "What is the main idea of these documents?",
-    action: "what is the main idea of these documents?",
-  },
-];
+// const suggestedActions = [   //Much better siguro if information nlng kaysa suggestion? //Github login i fix
+//   {
+//     title: "What is the summary of these documents?",
+//     action: "what is the summary of these documents?",
+//   },
+//   {
+//     title: "Who is the author of these documents?",
+//     action: "who is the author of these documents?",
+//   },
+//   {
+//     title: "What is the main idea of these documents?",
+//     action: "what is the main idea of these documents?",
+//   },
+// ];
 
 export const ChatInterface = ({ document }: documents) => {
   const chatId = document.id;
@@ -163,7 +163,7 @@ export const ChatInterface = ({ document }: documents) => {
                     you can select this action below
                   </p>
                   <div className="space-y-2">
-                    {suggestedActions.map((suggestedAction, index) => (
+                    {/* {suggestedActions.map((suggestedAction, index) => (
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -185,7 +185,9 @@ export const ChatInterface = ({ document }: documents) => {
                           </span>
                         </button>
                       </motion.div>
-                    ))}
+                    ))} */}
+
+                    {/* We can replace the better intruc in her? */}
                   </div>
                 </div>
               </div>

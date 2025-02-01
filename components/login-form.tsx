@@ -51,28 +51,28 @@ export function LoginForm({
     },
     onError: (error) => {
       if (axios.isAxiosError(error) && error.response?.data) {
-        const errorMessage = error.response.data.message
+        const errorMessage = error.response.data.message;
         toast.error(errorMessage);
         console.log("Not Being redirect:", errorMessage);
 
-        if(errorMessage.includes('Email')) {
-          form.setError('email', {
-            type: 'server',
-            message: errorMessage
-          }) 
+        if (errorMessage.includes("Email")) {
+          form.setError("email", {
+            type: "server",
+            message: errorMessage,
+          });
         } else if (errorMessage.includes("Password")) {
           form.setError("password", {
             type: "server",
-            message: errorMessage
+            message: errorMessage,
           });
         } else {
           form.setError("email", {
             type: "server",
-            message: errorMessage
+            message: errorMessage,
           });
           form.setError("password", {
             type: "server",
-            message: errorMessage
+            message: errorMessage,
           });
         }
       }
@@ -138,8 +138,8 @@ export function LoginForm({
                     )}
                   />
                 </div>
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   className="w-full"
                   disabled={mutation.isPending}
                 >
@@ -150,7 +150,7 @@ export function LoginForm({
                     Or continue with
                   </span>
                 </div>
-                <GithubProvider/>
+                <GithubProvider />
                 <div className="text-center text-sm">
                   Don&apos;t have an account?{" "}
                   <Link href="/signup" className="underline underline-offset-4">

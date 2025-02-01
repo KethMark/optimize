@@ -31,7 +31,7 @@ export function SignupForm({
   const form = useForm<z.infer<typeof signUpSchema>>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      fullName: "",
+      name: "",
       email: "",
       password: "",
     },
@@ -39,7 +39,7 @@ export function SignupForm({
 
   const mutation = useMutation({
     mutationFn: async (
-      data: Pick<AuthCredentials, "email" | "fullName" | "password">
+      data: Pick<AuthCredentials, "email" | "name" | "password">
     ): Promise<AuthCredentials> => {
       const response = await axios.post("/api/signup", data);
       return response.data;
@@ -99,7 +99,7 @@ export function SignupForm({
                 <div className="grid gap-2">
                   <FormField
                     control={form.control}
-                    name="fullName"
+                    name="name"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Full Name</FormLabel>

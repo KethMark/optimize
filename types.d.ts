@@ -1,5 +1,5 @@
 interface AuthCredentials {
-  fullName: string
+  name: string
   email: string
   password: string
   message: string
@@ -22,14 +22,10 @@ interface DeletePDF  {
   text: string;
 };
 
-interface ProfileUser  {
-  fullName: string;
+interface profileUser  {
+  name: string;
   email: string;
-};
-
-interface ProfileData {
-  profileUser: ProfileUser;
-  avatarProfile: string; 
+  image: string
 };
 
 interface ChatId {

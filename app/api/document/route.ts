@@ -14,7 +14,7 @@ export async function GET() {
   ) {
     return NextResponse.json({ error: 'User not authenticated'}, { status: 500})
   }
- console.log('Data user Id:', data.user.id)
+ 
   const profile = await db
     .select()
     .from(users)

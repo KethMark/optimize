@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { SparklesIcon } from "lucide-react";
 import { Markdown } from "./markdown";
 import { MessageActions } from "./message-action";
+import { Icon } from "./ui/icon";
 
 export const PreviewMessage = ({
   message,
@@ -32,9 +33,7 @@ export const PreviewMessage = ({
         )}
       >
         {message.role === "assistant" && (
-          <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border">
-            <SparklesIcon size={14} className="stroke-orange-600"/>
-          </div>
+          <Icon.Optimize/>
         )}
         <div className="flex flex-col gap-2 w-full">
           {message.content && (
@@ -64,12 +63,10 @@ export const ThinkingMessage = () => {
       animate={{ y: 0, opacity: 1, transition: { delay: 1 } }}
       data-role="assistant"
     >
-      <div className="flex gap-4 w-full rounded-xl">
-        <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border">
-          <SparklesIcon size={14} />
-        </div>
-        <div className="flex flex-col gap-2 w-full">
-          <div className="flex flex-col gap-4 text-muted-foreground">
+      <div className="flex gap-2 w-full rounded-xl">
+        <Icon.Optimize/>
+        <div className="flex flex-col gap-1 w-full">
+          <div className="flex flex-col gap-2 text-muted-foreground">
             Thinking...
           </div>
         </div>
