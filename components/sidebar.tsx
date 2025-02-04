@@ -22,11 +22,6 @@ import { Icon } from "./ui/icon";
 const data = {
   navSecondary: [
     {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
       title: "Feedback",
       url: "#",
       icon: Send,

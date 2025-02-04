@@ -58,6 +58,8 @@ export async function POST(req: Request) {
 
   const embedding = Array.from(output.data);
 
+  console.log("I'm done embeddings", embedding)
+
   const document = chunks.map((e) => ({
     content: e,
     embedding
@@ -69,7 +71,7 @@ export async function POST(req: Request) {
       ...embedding
     }))
   )
-  console.log('Congrats working..')
+
   return NextResponse.json({
     Message: "File Upload Success",
     id: fileStorageId,

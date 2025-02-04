@@ -3,13 +3,12 @@ import { documents } from "@/db/schema";
 import { cosineDistance, desc, eq, gt, sql, and } from "drizzle-orm";
 import { groq } from "@ai-sdk/groq";
 import {
-  embed,
   generateObject,
   generateText,
   Experimental_LanguageModelV1Middleware as LanguageModelV1Middleware,
 } from "ai";
 import { z } from "zod";
-import { cohere } from "@ai-sdk/cohere";
+import { pipeline } from '@xenova/transformers';
 
 const selectionSchema = z.object({
   files: z.object({
@@ -42,7 +41,7 @@ export const Middleware: LanguageModelV1Middleware = {
       .filter((content) => content.type === "text")
       .map((content) => content.text)
       .join("\n");
-
+   
     const { object: classification } = await generateObject({
       model: groq("llama-3.3-70b-versatile"),
       output: "enum",
@@ -63,10 +62,17 @@ export const Middleware: LanguageModelV1Middleware = {
       prompt: lastUserMessageContent,
     });
 
-    const { embedding: hypotheticalAnswerEmbedding } = await embed({
-      model: cohere.embedding("embed-english-v3.0"),
-      value: hypotheticalAnswer,
+    const pipe = await pipeline(
+      'feature-extraction',
+      'Supabase/gte-small',
+    );
+
+    const output = await pipe(hypotheticalAnswer, {
+      pooling: 'mean',
+      normalize: true,
     });
+
+    const hypotheticalAnswerEmbedding = Array.from(output.data);
 
     const similarity = sql<number>`1 - (${cosineDistance(
       documents.embedding,
@@ -76,9 +82,9 @@ export const Middleware: LanguageModelV1Middleware = {
     const similarGuides = await db
       .select({ name: documents.content, similarity })
       .from(documents)
-      .where(and(gt(similarity, 0.5), eq(documents.file_storage, documentsId)))
+      .where(and(gt(similarity, 0.7), eq(documents.file_storage, documentsId)))
       .orderBy((t) => desc(t.similarity))
-      .limit(6);
+      .limit(50);
 
     console.log("I'm done similar Guides", similarGuides);
 
@@ -96,7 +102,7 @@ export const Middleware: LanguageModelV1Middleware = {
         })),
         {
           type: "text",
-          text: `If no retrieve documents are found, respond politely with: "'I'm sorry, but I can't assist with your question at the moment!. Plss try an specific question."`,
+          text: `If no relevant answer documents are found, Try to respond accurately without sensitive information.`,
         },
       ],
     });

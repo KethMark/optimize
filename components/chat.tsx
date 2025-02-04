@@ -1,9 +1,16 @@
-'use client'
+"use client";
 
-import React from 'react'
+import React from "react";
 import { motion } from "framer-motion";
 import Toggle from "./ui/toggle";
-import { CircleStop, Send, TriangleAlert } from "lucide-react";
+import {
+  BarChart2,
+  BookOpen,
+  CircleStop,
+  Info,
+  Send,
+  TriangleAlert,
+} from "lucide-react";
 import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { useScrollToBottom } from "./ui/scroll-bottom";
@@ -21,21 +28,25 @@ import { pageNavigationPlugin } from "@react-pdf-viewer/page-navigation";
 import { Viewer, Worker } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
+import { Icon } from "./ui/icon";
 
-// const suggestedActions = [   //Much better siguro if information nlng kaysa suggestion? //Github login i fix
-//   {
-//     title: "What is the summary of these documents?",
-//     action: "what is the summary of these documents?",
-//   },
-//   {
-//     title: "Who is the author of these documents?",
-//     action: "who is the author of these documents?",
-//   },
-//   {
-//     title: "What is the main idea of these documents?",
-//     action: "what is the main idea of these documents?",
-//   },
-// ];
+const suggestedActions = [
+  {
+    icon: BookOpen,
+    title: "Summarize",
+    action: "what is the summary of these documents?",
+  },
+  {
+    icon: BarChart2,
+    title: "Get Insights",
+    action: "what insights can you derive from this data?",
+  },
+  {
+    icon: Info,
+    title: "Explain Simply",
+    action: "can you explain this concept in simple terms?",
+  },
+];
 
 export const ChatInterface = ({ document }: documents) => {
   const chatId = document.id;
@@ -52,7 +63,7 @@ export const ChatInterface = ({ document }: documents) => {
     Download: () => <></>,
     SwitchTheme: () => <></>,
     Open: () => <></>,
-    EnterFullScreen: () => <></>, 
+    EnterFullScreen: () => <></>,
   });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
@@ -156,88 +167,94 @@ export const ChatInterface = ({ document }: documents) => {
               )}
 
             {messages.length === 0 && (
-              <div className="max-w-96 mx-auto py-52" >
-                <div className="">
-                  <p className="text-2xl font-semibold">Suggested Actions:</p>
-                  <p className="text-muted-foreground text-sm mb-3">
-                    you can select this action below
-                  </p>
-                  <div className="space-y-2">
-                    {/* {suggestedActions.map((suggestedAction, index) => (
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.05 * index }}
-                        key={index} 
-                        className={"block"}
-                      >
-                        <button
-                          onClick={async () => {
-                            append({
-                              role: "user",
-                              content: suggestedAction.action,
-                            });
-                          }}
-                          className=""
+              <div className="max-w-lg mx-auto">
+                <div className="flex items-center justify-center gap-2 mt-56">
+                  <Icon.Optimize className="size-12" />
+                  <p className="text-xl sm:text-2xl md:text-3xl">optimize</p>
+                </div>
+                <div className="mt-[25rem]">
+                  <div className="flex items-center justify-between">
+                    {suggestedActions.map((suggestedAction, index) => {
+                      const Icon = suggestedAction.icon;
+                      return (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: 0.05 * index }}
+                          key={index}
+                          className={"block"}
                         >
-                          <span className="hover:underline">
-                            {suggestedAction.title}
-                          </span>
-                        </button>
-                      </motion.div>
-                    ))} */}
-
-                    {/* We can replace the better intruc in her? */}
+                          <button
+                            onClick={async () => {
+                              append({
+                                role: "user",
+                                content: suggestedAction.action,
+                              });
+                            }}
+                          >
+                            <span className="flex items-center gap-2">
+                              <Icon className="stroke-orange-600" />
+                              {suggestedAction.title}
+                            </span>
+                          </button>
+                        </motion.div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
             )}
+
             <div
               ref={messagesEndRef}
               className="shrink-0 min-w-[24px] min-h-[4px]"
             />
           </div>
 
-          {error && (
+          {error ? (
             <div className="flex justify-center mb-4">
               <Button onClick={() => reload()}>
                 <TriangleAlert className="mr-2 h-4 w-4" />
                 Regenerate
               </Button>
             </div>
-          )}
-
-          <form onSubmit={handleFormSubmit} className="relative" ref={formRef}>
-            <Textarea
-              ref={textareaRef}
-              placeholder={"Ask about the PDF..."}
-              value={input}
-              disabled={isLoading}
-              onChange={handleInputChange}
-              autoFocus={false}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSubmit(e as React.KeyboardEvent<HTMLTextAreaElement>);
-                }
-              }}
-              className="flex-1 pr-16 min-h-[24px] max-h-[72px] overflow-hidden"
-              style={{ resize: "none" }}
-            />
-            <Button
-              type="submit"
-              className="absolute right-2 top-2"
-              variant="ghost"
+          ) : (
+            <form
+              onSubmit={handleFormSubmit}
+              className="relative"
+              ref={formRef}
             >
-              {isLoading ? (
-                <CircleStop onClick={() => stop()} className="h-4 w-4" />
-              ) : (
-                <Send className="h-4 w-4" />
-              )}
-            </Button>
-          </form>
+              <Textarea
+                ref={textareaRef}
+                placeholder={"Ask about the PDF..."}
+                value={input}
+                disabled={isLoading}
+                onChange={handleInputChange}
+                autoFocus={false}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && !e.shiftKey) {
+                    e.preventDefault();
+                    handleSubmit(e as React.KeyboardEvent<HTMLTextAreaElement>);
+                  }
+                }}
+                className="flex-1 pr-16 min-h-[24px] max-h-[72px] overflow-hidden"
+                style={{ resize: "none" }}
+              />
+              <Button
+                type="submit"
+                className="absolute right-2 top-2"
+                variant="ghost"
+              >
+                {isLoading ? (
+                  <CircleStop onClick={() => stop()} className="h-4 w-4" />
+                ) : (
+                  <Send className="h-4 w-4" />
+                )}
+              </Button>
+            </form>
+          )}
         </div>
       </div>
     </div>
   );
-}
+};

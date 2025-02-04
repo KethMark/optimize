@@ -1,3 +1,7 @@
+interface Auth {
+  auth: Session | null
+}
+
 interface AuthCredentials {
   name: string
   email: string

@@ -8,7 +8,7 @@ import useScroll from "@/lib/useScroll";
 import { AlignJustify, X } from "lucide-react";
 import { Icon } from "../ui/icon";
 
-export function Navigation() {
+export function Navigation({ auth }: Auth) {
   const scrolled = useScroll(15);
   const [open, setOpen] = React.useState(false);
 
@@ -58,17 +58,23 @@ export function Navigation() {
               </Link>
               <Link
                 className="px-2 py-1 text-gray-900 dark:text-gray-50"
-                href={"/upload"}
+                href={"/"}
               >
                 Changelog
               </Link>
             </div>
           </nav>
-          <Button className="hidden h-10 font-semibold md:flex">
-            Book a demo
-          </Button>
+          <Link href="/upload">
+            <Button className="hidden h-10 font-semibold md:flex">
+              {auth ? "Upload" : "Login"}
+            </Button>
+          </Link>
           <div className="flex gap-x-2 md:hidden">
-            <Button>Book demo</Button>
+            <Link href="/upload">
+              <Button className="hidden h-10 font-semibold md:flex">
+                {auth ? "Upload" : "Login"}
+              </Button>
+            </Link>
             <Button
               onClick={() => setOpen(!open)}
               variant="secondary"
