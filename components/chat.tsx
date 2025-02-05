@@ -2,7 +2,6 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import Toggle from "./ui/toggle";
 import {
   BarChart2,
   BookOpen,
@@ -69,7 +68,6 @@ export const ChatInterface = ({ document }: documents) => {
   const formRef = useRef<HTMLFormElement>(null);
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
-  const [chatOnlyView, setChatOnlyView] = useState(false);
 
   const { data: conversation } = useQuery<Message[]>({
     queryKey: ["chat", chatId],
@@ -124,14 +122,9 @@ export const ChatInterface = ({ document }: documents) => {
 
   return (
     <div className="mx-auto flex flex-col no-scrollbar -mt-2">
-      <Toggle chatOnlyView={chatOnlyView} setChatOnlyView={setChatOnlyView} />
       <div className="flex justify-between h-[90vh] w-full lg:flex-row flex-col sm:space-y-20 lg:space-y-0 p-2">
         <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.js">
-          <div
-            className={`w-full h-[84vh] flex-col text-white !important ${
-              chatOnlyView ? "hidden" : "flex"
-            }`}
-          >
+          <div className="w-full h-[84vh] flex-col text-white hidden lg:flex">
             <div
               className="align-center bg-[#eeeeee] flex p-1"
               style={{
@@ -167,40 +160,38 @@ export const ChatInterface = ({ document }: documents) => {
               )}
 
             {messages.length === 0 && (
-              <div className="max-w-lg mx-auto">
-                <div className="flex items-center justify-center gap-2 mt-56">
+              <div className="flex flex-col max-w-lg mx-auto justify-between h-[65vh] lg:h-[75vh] md:h-[68vh]">
+                <div className="flex items-center justify-center gap-1 mt-44 lg:mt-60">
                   <Icon.Optimize className="size-12" />
                   <p className="text-xl sm:text-2xl md:text-3xl">optimize</p>
                 </div>
-                <div className="mt-[25rem]">
-                  <div className="flex items-center justify-between">
-                    {suggestedActions.map((suggestedAction, index) => {
-                      const Icon = suggestedAction.icon;
-                      return (
-                        <motion.div
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.05 * index }}
-                          key={index}
-                          className={"block"}
+                <div className="lg:flex md:flex">
+                  {suggestedActions.map((suggestedAction, index) => {
+                    const Icon = suggestedAction.icon;
+                    return (
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.05 * index }}
+                        key={index}
+                        className={"block"}
+                      >
+                        <button
+                          onClick={async () => {
+                            append({
+                              role: "user",
+                              content: suggestedAction.action,
+                            });
+                          }}
                         >
-                          <button
-                            onClick={async () => {
-                              append({
-                                role: "user",
-                                content: suggestedAction.action,
-                              });
-                            }}
-                          >
-                            <span className="flex items-center gap-2">
-                              <Icon className="stroke-orange-600" />
-                              {suggestedAction.title}
-                            </span>
-                          </button>
-                        </motion.div>
-                      );
-                    })}
-                  </div>
+                          <span className="flex items-center gap-2 px-5 py-4">
+                            <Icon className="stroke-orange-600" />
+                            {suggestedAction.title}
+                          </span>
+                        </button>
+                      </motion.div>
+                    );
+                  })}
                 </div>
               </div>
             )}
@@ -226,7 +217,7 @@ export const ChatInterface = ({ document }: documents) => {
             >
               <Textarea
                 ref={textareaRef}
-                placeholder={"Ask about the PDF..."}
+                placeholder={messages.length === 0 ? "Ask optimize about your pdf..." : "Ask optimze follow up question..."}
                 value={input}
                 disabled={isLoading}
                 onChange={handleInputChange}
@@ -246,7 +237,7 @@ export const ChatInterface = ({ document }: documents) => {
                 variant="ghost"
               >
                 {isLoading ? (
-                  <CircleStop onClick={() => stop()} className="h-4 w-4" />
+                  <CircleStop onClick={() => stop()} className="h-4 w-4 " />
                 ) : (
                   <Send className="h-4 w-4" />
                 )}

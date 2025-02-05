@@ -113,84 +113,88 @@ export const Uploads = () => {
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
-    <>
-      <div className="sm:mx-auto sm:max-w-lg w-full mt-32">
-        <h3 className="text-tremor-title font-semibold text-tremor-content-strong dark:text-dark-tremor-content-strong">
-          File Upload
-        </h3>
-        <div
-          {...getRootProps()}
-          className="mt-4 flex justify-center rounded-tremor-default border border-dashed border-gray-300 px-6 py-16 dark:border-dark-tremor-border"
-        >
-          <div>
-            <Input
-              {...getInputProps()}
-              id="dropzone-file"
-              accept="application/pdf"
-              type="file"
-              className="hidden"
-            />
-            <File
-              className="mx-auto h-12 w-12 text-tremor-content-subtle dark:text-dark-tremor-content"
-              aria-hidden={true}
-            />
-            <div className="mt-4 flex text-tremor-default leading-6 text-tremor-content-emphasis dark:text-dark-tremor-content-emphasis">
-              <p>Drag and drop or</p>
-              <label
-                htmlFor="file-upload-5"
-                className="relative cursor-pointer rounded-tremor-small pl-1 font-medium text-tremor-brand hover:underline hover:underline-offset-4 dark:text-dark-tremor-brand"
-              >
-                <span>choose file</span>
-              </label>
-              <p className="pl-1">to upload</p>
-            </div>
-            <p className="text-center text-tremor-label leading-5 text-tremor-content dark:text-dark-tremor-content">
-              PDF up to 1MB
-            </p>
+    <div className="w-full max-w-lg mx-auto px-4 sm:px-6 lg:px-8 mt-16 sm:mt-24 lg:mt-32">
+      <h3 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100 mb-6 sm:mb-8">
+        File Upload
+      </h3>
+      <div
+        {...getRootProps()}
+        className="flex justify-center rounded-lg border border-dashed border-gray-300 px-6 py-8 sm:py-16 dark:border-gray-600"
+      >
+        <div className="text-center">
+          <Input
+            {...getInputProps()}
+            id="dropzone-file"
+            accept="application/pdf"
+            type="file"
+            className="hidden"
+          />
+          <File
+            className="mx-auto h-10 w-10 sm:h-12 sm:w-12 text-gray-400 dark:text-gray-500"
+            aria-hidden={true}
+          />
+          <div className="mt-4 flex flex-wrap justify-center text-sm sm:text-base text-gray-700 dark:text-gray-300">
+            <p>Drag and drop or</p>
+            <label
+              htmlFor="file-upload-5"
+              className="relative cursor-pointer rounded-md pl-1 font-medium hover:underline hover:underline-offset-4 "
+            >
+              <span>choose file</span>
+            </label>
+            <p className="pl-1">to upload</p>
           </div>
+          <p className="text-center leading-5 text-tremor-content dark:text-dark-tremor-content">
+            PDF up to 1MB
+          </p>
         </div>
-        {isSupaUploading && (
-          <>
-            <h4 className="mt-6 text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-              In Progress
-            </h4>
-            <div className="mt-2">
-              <div className="block py-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2.5">
-                    <File
-                      className="h-7 w-7 shrink-0 text-tremor-content dark:text-dark-tremor-content"
-                      aria-hidden={true}
-                    />
-                    <div>
-                      <p className="text-tremor-label font-medium text-tremor-content-strong dark:text-dark-tremor-content-strong truncate max-w-md">
-                        {uploadFileName}
-                      </p>
-                      <p className="text-tremor-label text-tremor-content dark:text-dark-tremor-content">
-                        {uploadFileSize?.toFixed(2)} MB
-                      </p>
-                    </div>
+      </div>
+      {isSupaUploading && (
+        <div className="mt-6">
+          <h4 className="text-sm sm:text-base text-gray-700 dark:text-gray-300">
+            In Progress
+          </h4>
+          <div className="mt-2">
+            <div className="block py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2.5">
+                  <File
+                    className="h-6 w-6 sm:h-7 sm:w-7 shrink-0 text-gray-500 dark:text-gray-400"
+                    aria-hidden={true}
+                  />
+                  <div>
+                    <p className="text-xs sm:text-sm font-medium text-gray-900 dark:text-gray-100 truncate max-w-[150px] sm:max-w-[200px] md:max-w-[300px]">
+                      {uploadFileName}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {uploadFileSize?.toFixed(2)} MB
+                    </p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => abortController?.abort()}
-                    className="text-tremor-content-subtle hover:text-tremor-content dark:text-dark-tremor-content-subtle hover:dark:text-dark-tremor-content"
-                    aria-label="Cancel"
-                  >
-                    <CircleX className="size-5 shrink-0" aria-hidden={true} />
-                  </button>
                 </div>
-                <div className="mt-2 flex items-center space-x-3">
-                  <Progress value={supabaseProgress} className="[&>*]:h-1.5" />
-                  <span className="text-tremor-label text-tremor-content dark:text-dark-tremor-content">
-                    {Math.round(supabaseProgress)}%
-                  </span>
-                </div>
+                <button
+                  type="button"
+                  onClick={() => abortController?.abort()}
+                  className="text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
+                  aria-label="Cancel"
+                >
+                  <CircleX
+                    className="h-5 w-5 sm:h-6 sm:w-6 shrink-0"
+                    aria-hidden={true}
+                  />
+                </button>
+              </div>
+              <div className="mt-2 flex items-center space-x-3">
+                <Progress
+                  value={supabaseProgress}
+                  className="flex-grow [&>*]:h-1.5"
+                />
+                <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 min-w-[40px] text-right">
+                  {Math.round(supabaseProgress)}%
+                </span>
               </div>
             </div>
-          </>
-        )}
-      </div>
-    </>
+          </div>
+        </div>
+      )}
+    </div>
   );
 };

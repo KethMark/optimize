@@ -28,7 +28,7 @@ export const PreviewMessage = ({
           "flex gap-4 w-full rounded-xl",
           message.role === "user" ? "justify-start" : "justify-end",
           message.role === "user" 
-            ? "bg-blue-200 px-3 py-2 w-fit max-w-4xl" 
+            ? "bg-orange-300 dark:bg-orange-500 px-3 py-2 w-fit max-w-4xl" 
             : ""
         )}
       >
@@ -63,7 +63,7 @@ export const ThinkingMessage = () => {
       animate={{ y: 0, opacity: 1, transition: { delay: 1 } }}
       data-role="assistant"
     >
-      <div className="flex gap-2 w-full rounded-xl">
+      <div className="flex items-center gap-2 w-full rounded-xl">
         <Icon.Optimize/>
         <div className="flex flex-col gap-1 w-full">
           <div className="flex flex-col gap-2 text-muted-foreground">
