@@ -1,3 +1,0 @@
-working:
-    Page not found - landing Page and upload
-    mobile responsive - upload and chat page
