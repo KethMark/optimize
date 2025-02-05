@@ -36,7 +36,7 @@ export default function Hero() {
           className="group gap-x-2 bg-transparent font-semibold hover:bg-transparent dark:bg-transparent hover:dark:bg-transparent"
         >
           <Link
-            href="https://www.youtube.com/watch?v=QRZ_l7cVzzU"
+            href="https://www.youtube.com/watch?v=bZFedu-0emE&t=10830s"
             className="ring-1 ring-gray-200 sm:ring-0 dark:ring-gray-900"
             target="_blank"
           >

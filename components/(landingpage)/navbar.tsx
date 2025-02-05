@@ -71,7 +71,7 @@ export function Navigation({ auth }: Auth) {
           </Link>
           <div className="flex gap-x-2 md:hidden">
             <Link href="/upload">
-              <Button className="hidden h-10 font-semibold md:flex">
+              <Button>
                 {auth ? "Upload" : "Login"}
               </Button>
             </Link>
