@@ -9,7 +9,7 @@ export default function HeroImage() {
         <div className="rounded-xl bg-white ring-1 ring-slate-900/5 dark:bg-slate-950 dark:ring-white/15">
           <ThemedImage
             lightSrc="/optimize.png"
-            darkSrc="/optimize.png"
+            darkSrc="/optimize-dark.png"
             alt="A preview of the Database web app"
             width={2400}
             height={1600}
