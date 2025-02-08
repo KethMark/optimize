@@ -46,19 +46,19 @@ export function Navigation({ auth }: Auth) {
             <div className="flex items-center gap-10 font-medium">
               <Link
                 className="px-2 py-1 text-gray-900 dark:text-gray-50"
-                href={"/"}
+                href={"/about"}
               >
                 About
               </Link>
               <Link
                 className="px-2 py-1 text-gray-900 dark:text-gray-50"
-                href={"/"}
+                href={"/feedback"}
               >
                 Feedback
               </Link>
               <Link
                 className="px-2 py-1 text-gray-900 dark:text-gray-50"
-                href={"/"}
+                href={"/changelog"}
               >
                 Changelog
               </Link>
@@ -96,13 +96,13 @@ export function Navigation({ auth }: Auth) {
         >
           <ul className="space-y-4 font-medium">
             <li onClick={() => setOpen(false)}>
-              <Link href={"/"}>About</Link>
+              <Link href={"/about"}>About</Link>
             </li>
             <li onClick={() => setOpen(false)}>
-              <Link href={"/"}>Pricing</Link>
+              <Link href={"/feedback"}>Feedback</Link>
             </li>
             <li onClick={() => setOpen(false)}>
-              <Link href={"/"}>Changelog</Link>
+              <Link href={"/changelog"}>Changelog</Link>
             </li>
           </ul>
         </nav>

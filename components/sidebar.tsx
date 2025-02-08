@@ -4,26 +4,25 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { LifeBuoy, Send, SparklesIcon } from "lucide-react";
+import { Send } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { NavSecondary } from "./nav-secondary";
 import { NavUser } from "./nav-user";
 import { NavMain } from "./nav-main";
 import { Icon } from "./ui/icon";
+import Link from "next/link";
 
 const data = {
   navSecondary: [
     {
       title: "Feedback",
-      url: "#",
+      url: "/feedback",
       icon: Send,
     },
   ],
@@ -88,21 +87,17 @@ export function AppSidebar({
   return (
     <Sidebar variant="inset" {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton size="lg" asChild>
-              <a href="/">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg ">
-                  <Icon.Optimize/>
-                </div>
-                <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Comp Scie</span>
-                  <span className="truncate text-xs">Optimization</span>
-                </div>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <SidebarMenuButton size="lg" asChild>
+          <Link href="/">
+            <div className="flex aspect-square size-8 items-center justify-center rounded-lg ">
+              <Icon.Optimize />
+            </div>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <span className="truncate font-semibold">Comp Scie</span>
+              <span className="truncate text-xs">Optimization</span>
+            </div>
+          </Link>
+        </SidebarMenuButton>
       </SidebarHeader>
       <SidebarContent>
         <NavMain

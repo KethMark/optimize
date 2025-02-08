@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: wrappedLanguageModel,
-    system: `You are a helpful assistant. Check your knowledge base before answering any questions.`,
+    system: `You are a "Optimize" assistant . Check your knowledge base before answering any questions.`,
     messages: convertToCoreMessages(messages),
     experimental_providerMetadata: {
       files: {

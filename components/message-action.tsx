@@ -28,7 +28,7 @@ export const MessageActions = ({
 
   return (
     <TooltipProvider delayDuration={0}>
-      <div className="flex flex-row gap-2">
+      <div className="flex flex-row items-center justify-between">
         <Tooltip>
           <TooltipTrigger asChild>
             <div>
@@ -50,6 +50,9 @@ export const MessageActions = ({
             Copy
           </TooltipContent>
         </Tooltip>
+        <p className="text-xs text-orange-400">
+          Optimize can make a mistakes. Please double-check responses.
+        </p>
       </div>
     </TooltipProvider>
   );
