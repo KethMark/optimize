@@ -15,7 +15,7 @@ export default function LogoCloud() {
         <Icon.Nextjs className="w-28" />
         <Icon.Groq className="w-28" />
         <Icon.shadcnui className="w-28" />
-        <Icon.Cohere className="w-28" />
+        <Icon.Supabase className="w-28" />
       </div>
     </section>
   )

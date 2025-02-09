@@ -22,7 +22,9 @@ export function MainNav() {
     <aside className="w-64 border-r border-l p-6 hidden md:block">
       <nav className="space-y-6">
         <div>
-          <div className="mb-4 text-sm font-medium">Getting Started</div>
+          <div className="mb-4 text-sm font-medium">
+            <Link href={'/'}>Getting Started</Link>
+          </div>
           <div className="space-y-1">
             {gettingStartedItems.map((item) => (
               <Link

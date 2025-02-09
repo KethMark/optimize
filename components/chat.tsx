@@ -7,6 +7,7 @@ import {
   BookOpen,
   CircleStop,
   Info,
+  RotateCw,
   Send,
   TriangleAlert,
 } from "lucide-react";
@@ -14,7 +15,7 @@ import { Textarea } from "./ui/textarea";
 import { Button } from "./ui/button";
 import { useScrollToBottom } from "./ui/scroll-bottom";
 import { PreviewMessage, ThinkingMessage } from "./message";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import { useChat, Message } from "ai/react";
@@ -28,6 +29,7 @@ import { Viewer, Worker } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import { Icon } from "./ui/icon";
+import { toast } from "sonner";
 
 const suggestedActions = [
   {
@@ -100,8 +102,8 @@ export const ChatInterface = ({ document }: documents) => {
       chatId,
     },
     initialMessages: conversation || [],
-    onError: (e) => {
-      console.error("Error sending message:", e);
+    onError: (err) => {
+      toast.error(err.message, { position: "top-right" });
     },
   });
 
@@ -119,6 +121,9 @@ export const ChatInterface = ({ document }: documents) => {
     e.preventDefault();
     handleSubmit(e);
   };
+
+  const isRateLimitError =
+    error && error.message.includes("You have reached your request limit");
 
   return (
     <div className="mx-auto flex flex-col no-scrollbar -mt-2">
@@ -202,48 +207,42 @@ export const ChatInterface = ({ document }: documents) => {
             />
           </div>
 
-          {error ? (
-            <div className="flex justify-center mb-4">
-              <Button onClick={() => reload()}>
-                <TriangleAlert className="mr-2 h-4 w-4" />
-                Regenerate
-              </Button>
-            </div>
-          ) : (
-            <form
-              onSubmit={handleFormSubmit}
-              className="relative"
-              ref={formRef}
+          <form onSubmit={handleFormSubmit} className="relative" ref={formRef}>
+            <Textarea
+              ref={textareaRef}
+              placeholder={
+                messages.length === 0
+                  ? "Ask optimize about your pdf..."
+                  : "Ask optimze follow up question..."
+              }
+              value={input}
+              disabled={isLoading || isRateLimitError}
+              onChange={handleInputChange}
+              autoFocus={false}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSubmit(e as React.KeyboardEvent<HTMLTextAreaElement>);
+                }
+              }}
+              className="flex-1 pr-16 min-h-[24px] max-h-[72px] overflow-hidden"
+              style={{ resize: "none" }}
+            />
+            <Button
+              type="submit"
+              disabled={isRateLimitError}
+              className="absolute right-2 top-2"
+              variant="ghost"
             >
-              <Textarea
-                ref={textareaRef}
-                placeholder={messages.length === 0 ? "Ask optimize about your pdf..." : "Ask optimze follow up question..."}
-                value={input}
-                disabled={isLoading}
-                onChange={handleInputChange}
-                autoFocus={false}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e as React.KeyboardEvent<HTMLTextAreaElement>);
-                  }
-                }}
-                className="flex-1 pr-16 min-h-[24px] max-h-[72px] overflow-hidden"
-                style={{ resize: "none" }}
-              />
-              <Button
-                type="submit"
-                className="absolute right-2 top-2"
-                variant="ghost"
-              >
-                {isLoading ? (
-                  <CircleStop onClick={() => stop()} className="h-4 w-4 " />
-                ) : (
-                  <Send className="h-4 w-4" />
-                )}
-              </Button>
-            </form>
-          )}
+              {isLoading ? (
+                <CircleStop onClick={() => stop()} className="h-4 w-4" />
+              ) : error ? (
+                <RotateCw onClick={() => reload()} className="h-4 w-4" />
+              ) : (
+                <Send className="h-4 w-4" />
+              )}
+            </Button>
+          </form>
         </div>
       </div>
     </div>
