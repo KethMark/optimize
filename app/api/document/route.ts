@@ -25,6 +25,7 @@ export async function GET() {
     .from(fileStorage)
     .where(eq(fileStorage.users, profile[0].id))
     .orderBy(desc(fileStorage.createdAt))
+    .limit(15)
 
   return NextResponse.json(documents)
 }

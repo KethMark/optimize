@@ -29,7 +29,6 @@ import { Viewer, Worker } from "@react-pdf-viewer/core";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
 import { Icon } from "./ui/icon";
-import { toast } from "sonner";
 
 const suggestedActions = [
   {
@@ -103,7 +102,7 @@ export const ChatInterface = ({ document }: documents) => {
     },
     initialMessages: conversation || [],
     onError: (err) => {
-      toast.error(err.message, { position: "top-right" });
+      console.log(err.message)
     },
   });
 
@@ -122,8 +121,8 @@ export const ChatInterface = ({ document }: documents) => {
     handleSubmit(e);
   };
 
-  const isRateLimitError =
-    error && error.message.includes("You have reached your request limit");
+  const isLastMessage = messages.length === 12
+  const islastMessageWarning = messages.length === 10 ? "1 lastmessage request left. until 24hrs" : null
 
   return (
     <div className="mx-auto flex flex-col no-scrollbar -mt-2">
@@ -206,7 +205,9 @@ export const ChatInterface = ({ document }: documents) => {
               className="shrink-0 min-w-[24px] min-h-[4px]"
             />
           </div>
-
+          <div className="text-end mr-16 text-sm mb-4 font-medium">
+            {islastMessageWarning}
+          </div>
           <form onSubmit={handleFormSubmit} className="relative" ref={formRef}>
             <Textarea
               ref={textareaRef}
@@ -216,7 +217,7 @@ export const ChatInterface = ({ document }: documents) => {
                   : "Ask optimze follow up question..."
               }
               value={input}
-              disabled={isLoading || isRateLimitError}
+              disabled={isLoading || !!error || isLastMessage}
               onChange={handleInputChange}
               autoFocus={false}
               onKeyDown={(e) => {
@@ -230,8 +231,8 @@ export const ChatInterface = ({ document }: documents) => {
             />
             <Button
               type="submit"
-              disabled={isRateLimitError}
-              className="absolute right-2 top-2"
+              disabled={ isLastMessage}
+              className="absolute right-2 top-2 bg-slate-100"
               variant="ghost"
             >
               {isLoading ? (

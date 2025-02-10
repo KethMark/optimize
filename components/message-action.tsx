@@ -50,7 +50,7 @@ export const MessageActions = ({
             Copy
           </TooltipContent>
         </Tooltip>
-        <p className="text-xs text-orange-400">
+        <p className="text-sm ">
           Optimize can make a mistakes. Please double-check responses.
         </p>
       </div>

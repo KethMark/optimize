@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   SidebarGroup,
@@ -17,6 +17,7 @@ import {
 import { UseMutateAsyncFunction } from "@tanstack/react-query";
 import { Loader, MoreHorizontal, TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export function NavMain({
   listDocument,
@@ -86,6 +87,18 @@ export function NavMain({
                   </DropdownMenu>
                 </SidebarMenuItem>
               ))}
+            <SidebarMenuItem>
+              <SidebarMenuButton className="text-sidebar-foreground/70">
+                {listDocument?.length === 15 ? (
+                  <>
+                    <Link href='/documents' className="flex items-center gap-2">
+                      <MoreHorizontal className="text-sidebar-foreground/70" />
+                      <span>More</span>
+                    </Link>
+                  </>
+                ) : null}
+              </SidebarMenuButton>
+            </SidebarMenuItem>
           </div>
         )}
       </SidebarMenu>
