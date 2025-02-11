@@ -6,12 +6,12 @@ import { Icon } from "../ui/icon";
 const navigation = {
   product: [
     { name: "Enterprise", href: "#", external: false },
-    { name: "Pricing", href: "/pricing", external: false },
+    { name: "Pricing", href: "#", external: false },
     { name: "Docs", href: "#", external: false },
     { name: "Changelog", href: "/changelog", external: false },
   ],
   resources: [
-    { name: "FAQs", href: "/pricing#faq-title", external: false },
+    { name: "FAQs", href: "#", external: false },
     { name: "GitHub", href: "#", external: true },
     { name: "Discord", href: "#", external: true },
     { name: "YouTube", href: "#", external: true },

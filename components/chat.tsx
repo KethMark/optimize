@@ -102,7 +102,7 @@ export const ChatInterface = ({ document }: documents) => {
     },
     initialMessages: conversation || [],
     onError: (err) => {
-      console.log(err.message)
+      console.log(err.message);
     },
   });
 
@@ -121,8 +121,9 @@ export const ChatInterface = ({ document }: documents) => {
     handleSubmit(e);
   };
 
-  const isLastMessage = messages.length === 12
-  const islastMessageWarning = messages.length === 10 ? "1 lastmessage request left. until 24hrs" : null
+  const isLastMessage = messages.length === 12;
+  const islastMessageWarning =
+    messages.length === 10 ? "1 lastmessage request left. until 24hrs" : null;
 
   return (
     <div className="mx-auto flex flex-col no-scrollbar -mt-2">
@@ -231,8 +232,8 @@ export const ChatInterface = ({ document }: documents) => {
             />
             <Button
               type="submit"
-              disabled={ isLastMessage}
-              className="absolute right-2 top-2 bg-slate-100"
+              disabled={isLastMessage}
+              className="absolute right-2 top-2"
               variant="ghost"
             >
               {isLoading ? (

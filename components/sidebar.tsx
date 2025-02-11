@@ -94,7 +94,7 @@ export function AppSidebar({
             </div>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-semibold">Comp Scie</span>
-              <span className="truncate text-xs">Optimization</span>
+              <span className="truncate text-xs">Optimize</span>
             </div>
           </Link>
         </SidebarMenuButton>

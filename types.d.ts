@@ -14,6 +14,13 @@ interface documentsList {
   users: string;
   fileUrl: string;
   fileName: string;
+  createdAt: Date | null;
+}
+
+interface FileStorageSearch {
+  fileStorage: documentsList[];
+  newOffset: number | null;
+  totalFileStorage: number;
 }
 
 interface documents {
