@@ -44,7 +44,8 @@ export function MainNav() {
       </nav>
       {/* <footer className="absolute bottom-0 mb-4">
         <div className="flex items-center gap-2 text-xl font-semibold">
-          
+          Pwd ramn diay mag create tag another interface para sa logout 
+          nya i reuse to nato ag fetch data naa sa sidebar
         </div>
       </footer> */}
     </aside>

@@ -50,7 +50,7 @@ export const MessageActions = ({
             Copy
           </TooltipContent>
         </Tooltip>
-        <p className="text-sm ">
+        <p className="text-sm hidden lg:block">
           Optimize can make a mistakes. Please double-check responses.
         </p>
       </div>
