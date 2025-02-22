@@ -68,7 +68,6 @@ export const ChatInterface = ({ document }: documents) => {
   });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
-  const formRef = useRef<HTMLFormElement>(null);
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
 
@@ -116,8 +115,8 @@ export const ChatInterface = ({ document }: documents) => {
 
   const adjustHeight = () => {
     if (textareaRef.current) {
-      textareaRef.current.style.height = "auto"; // Reset height before adjusting
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // Set height based on content
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   };
 
@@ -145,9 +144,9 @@ export const ChatInterface = ({ document }: documents) => {
     [handleSubmit, width]
   );
 
-  const isLastMessage = messages.length === 12;
+  const isLastMessage = messages.length === 24;
   const islastMessageWarning =
-    messages.length === 10 ? "1 lastmessage request left. until 24hrs" : null;
+    messages.length === 22 ? "1 message request left. until 2hrs" : null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[calc(96vh-4rem)]">
@@ -245,6 +244,11 @@ export const ChatInterface = ({ document }: documents) => {
                 })}
               </div>
             )}
+
+            <div className="text-sm text-muted-foreground flex items-center justify-center lg:hidden">
+              {islastMessageWarning}
+            </div>
+
             <Textarea
               ref={textareaRef}
               placeholder={
@@ -270,7 +274,7 @@ export const ChatInterface = ({ document }: documents) => {
 
             <div className="absolute bottom-0 p-3 w-fit flex flex-row justify-start">
               <p className="text-muted-foreground text-sm">
-                llama-3.3-70b-versatile
+                llama-3.3-70b
               </p>
             </div>
 

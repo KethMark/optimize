@@ -53,6 +53,10 @@ export const MessageActions = ({
         <p className="text-sm hidden lg:block">
           Optimize can make a mistakes. Please double-check responses.
         </p>
+        <p className="text-sm lg:hidden">
+          Optimize can make a mistakes. <br/>
+          Please double-check responses.
+        </p>
       </div>
     </TooltipProvider>
   );

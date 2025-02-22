@@ -5,6 +5,11 @@ const page = () => {
     <div className="flex">
       <div className="flex flex-col space-y-3 max-w-6xl w-full pr-8">
         <h1 className="font-bold text-2xl">Changelog</h1>
+        <h2 className="font-bold">2/22/25</h2>
+        <p>
+          We improved <strong>UI Based Experienced</strong> to enhanced user interaction. <br/>
+          also fix some known issue related to the application
+        </p>
         <h2 className="font-bold">2/12/25</h2>
         <p>
           We added <strong>File Handling Management</strong> to maintain user experience. <br/>
@@ -26,6 +31,8 @@ const page = () => {
               <p className="block py-1 ml-8">Rate Limiting</p>
               <p className="block py-1 ml-4">2/12/25</p>
               <p className="block py-1 ml-8">File Handling Management</p>
+              <p className="block py-1 ml-4">2/22/25</p>
+              <p className="block py-1 ml-8">UI Based Experienced</p>
             </div>
           </nav>
         </div>

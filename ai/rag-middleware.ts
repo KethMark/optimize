@@ -1,14 +1,14 @@
 import { db } from "@/db/index";
 import { documents } from "@/db/schema";
-import { cosineDistance, desc, eq, gt, sql, and } from "drizzle-orm";
+import { desc, eq, gt, sql, and, innerProduct } from "drizzle-orm";
 import { groq } from "@ai-sdk/groq";
 import {
   generateObject,
   generateText,
-  Experimental_LanguageModelV1Middleware as LanguageModelV1Middleware,
+  LanguageModelV1Middleware,
 } from "ai";
 import { z } from "zod";
-import { pipeline } from '@xenova/transformers';
+import { pipeline } from "@xenova/transformers";
 
 const selectionSchema = z.object({
   files: z.object({
@@ -41,7 +41,7 @@ export const Middleware: LanguageModelV1Middleware = {
       .filter((content) => content.type === "text")
       .map((content) => content.text)
       .join("\n");
-   
+
     const { object: classification } = await generateObject({
       model: groq("llama-3.3-70b-versatile"),
       output: "enum",
@@ -62,29 +62,26 @@ export const Middleware: LanguageModelV1Middleware = {
       prompt: lastUserMessageContent,
     });
 
-    const pipe = await pipeline(
-      'feature-extraction',
-      'Supabase/gte-small',
-    );
+    const pipe = await pipeline("feature-extraction", "Supabase/gte-small");
 
     const output = await pipe(hypotheticalAnswer, {
-      pooling: 'mean',
+      pooling: "mean",
       normalize: true,
     });
 
     const hypotheticalAnswerEmbedding = Array.from(output.data);
 
-    const similarity = sql<number>`1 - (${cosineDistance(
+    const similarity = sql<number>`(${innerProduct(
       documents.embedding,
       hypotheticalAnswerEmbedding
-    )})`;
+    )}) * -1`;
 
     const similarGuides = await db
       .select({ name: documents.content, similarity })
       .from(documents)
       .where(and(gt(similarity, 0.7), eq(documents.file_storage, documentsId)))
       .orderBy((t) => desc(t.similarity))
-      .limit(50);
+      .limit(60);
 
     console.log("I'm done similar Guides", similarGuides);
 
@@ -94,7 +91,7 @@ export const Middleware: LanguageModelV1Middleware = {
         ...recentMessage.content,
         {
           type: "text",
-          text: "Here is some relevant information that you can use to answer the question:",
+          text: "Here is some relevant information that you can only use to answer the specific question:",
         },
         ...similarGuides.map((document) => ({
           type: "text" as const,
@@ -102,7 +99,11 @@ export const Middleware: LanguageModelV1Middleware = {
         })),
         {
           type: "text",
-          text: `If no relevant answer documents are found, Try to respond accurately without sensitive information.`,
+          text: `
+            If no relevant answer documents are found, Try to respond accurately without sensitive information that are related only in the documents.
+            Don't make any response that are not related in the documents or else you are being ask to include the information in your document knowledge.
+            If no related answer in the document or you are not being ask to include the information in your current knowledge, just response: "Try any different related question."
+          `,
         },
       ],
     });

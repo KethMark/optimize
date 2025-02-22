@@ -90,7 +90,7 @@ export const Uploads = () => {
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     for (const file of acceptedFiles) {
-      if (file.size > 1 * 1024 * 1024) {
+      if (file.size > 5 * 1024 * 1024) {
         toast.error("Uploaded file exceeds maximum size of 1 MB");
         continue;
       }
@@ -144,7 +144,7 @@ export const Uploads = () => {
             <p className="pl-1">to upload</p>
           </div>
           <p className="text-center leading-5 text-tremor-content dark:text-dark-tremor-content">
-            PDF up to 1MB
+            PDF up to 5MB
           </p>
         </div>
       </div>

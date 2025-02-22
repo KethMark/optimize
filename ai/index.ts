@@ -1,4 +1,4 @@
-import { experimental_wrapLanguageModel as wrapLanguageModel } from "ai";
+import { wrapLanguageModel } from "ai";
 import {  Middleware } from "./rag-middleware";
 import { groq } from '@ai-sdk/groq';
 

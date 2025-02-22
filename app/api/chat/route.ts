@@ -14,7 +14,7 @@ export async function POST(req: Request) {
 
   const ratelimit = new Ratelimit({
     redis: Redis.fromEnv(),
-    limiter: Ratelimit.fixedWindow(6, "1d"),
+    limiter: Ratelimit.fixedWindow(12, "2h"),
   });
 
   const { success } = await ratelimit.limit(chatId);
@@ -25,7 +25,11 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: wrappedLanguageModel,
-    system: `You are a "Optimize" assistant . Check your knowledge base before answering any questions.`,
+    system: `
+      You are a "Optimize" assistant . Check your knowledge base before answering any questions.
+      Don't make any response that are not related in the documents, instead Just make a suggestion that are related only in the documents. 
+      Don't share any information/insight that are not related documents.
+    `,
     messages: convertToCoreMessages(messages),
     experimental_providerMetadata: {
       files: {
