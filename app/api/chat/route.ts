@@ -3,8 +3,8 @@ import { db } from "@/db/index";
 import { conversations } from "@/db/schema";
 import { convertToCoreMessages, streamText } from "ai"
 import { eq } from "drizzle-orm";
-import { Ratelimit } from "@upstash/ratelimit"
-import { Redis } from "@upstash/redis"
+// import { Ratelimit } from "@upstash/ratelimit"
+// import { Redis } from "@upstash/redis"
 
 export const maxDuration = 30
 
@@ -12,16 +12,16 @@ export const maxDuration = 30
 export async function POST(req: Request) {
   const { messages, chatId } = await req.json();
 
-  const ratelimit = new Ratelimit({
-    redis: Redis.fromEnv(),
-    limiter: Ratelimit.fixedWindow(12, "2h"),
-  });
+  // const ratelimit = new Ratelimit({
+  //   redis: Redis.fromEnv(),
+  //   limiter: Ratelimit.fixedWindow(12, "2h"),
+  // });
 
-  const { success } = await ratelimit.limit(chatId);
+  // const { success } = await ratelimit.limit(chatId);
 
-  if (!success) {
-    return new Response('You have reached your request limit', {status: 429});
-  }
+  // if (!success) {
+  //   return new Response('You have reached your request limit', {status: 429});
+  // }
 
   const result = streamText({
     model: wrappedLanguageModel,

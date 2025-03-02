@@ -144,9 +144,9 @@ export const ChatInterface = ({ document }: documents) => {
     [handleSubmit, width]
   );
 
-  const isLastMessage = messages.length === 24;
-  const islastMessageWarning =
-    messages.length === 22 ? "1 message request left. until 2hrs" : null;
+  // const isLastMessage = messages.length === 24;
+  // const islastMessageWarning =
+  //   messages.length === 22 ? "1 message request left. until 2hrs" : null;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[calc(96vh-4rem)]">
@@ -245,19 +245,19 @@ export const ChatInterface = ({ document }: documents) => {
               </div>
             )}
 
-            <div className="text-sm text-muted-foreground flex items-center justify-center lg:hidden">
+            {/* <div className="text-sm text-muted-foreground flex items-center justify-center lg:hidden">
               {islastMessageWarning}
-            </div>
+            </div> */}
 
             <Textarea
               ref={textareaRef}
               placeholder={
                 messages.length === 0
-                  ? "Ask optimize about your pdf..."
-                  : "Ask optimize follow up question..."
+                  ? "Ask a question..."
+                  : "Ask follow up question..."
               }
               value={input}
-              disabled={isLoading || !!error || isLastMessage}
+              disabled={isLoading || !!error}
               onChange={handleInput}
               onKeyDown={(event) => {
                 if (event.key === "Enter" && !event.shiftKey) {
@@ -279,17 +279,16 @@ export const ChatInterface = ({ document }: documents) => {
             </div>
 
             <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row items-center gap-2 justify-end">
-              <div className="hidden lg:block">
+              {/* <div className="hidden lg:block">
                 <p className="text-muted-foreground text-sm">
                   {islastMessageWarning}
                 </p>
-              </div>
+              </div> */}
               {isLoading ? (
                 <Button
                   size="icon"
                   type="submit"
                   className="rounded-full"
-                  disabled={isLastMessage}
                   onClick={(e) => {
                     e.preventDefault();
                     stop();
@@ -302,7 +301,6 @@ export const ChatInterface = ({ document }: documents) => {
                   size="icon"
                   type="submit"
                   className="rounded-full"
-                  disabled={isLastMessage}
                   onClick={(e) => {
                     e.preventDefault();
                     reload();
@@ -314,7 +312,7 @@ export const ChatInterface = ({ document }: documents) => {
                 <Button
                   type="submit"
                   size="icon"
-                  disabled={isLastMessage || isLoading}
+                  disabled={isLoading}
                   className="rounded-full"
                   onClick={(e) => {
                     e.preventDefault();

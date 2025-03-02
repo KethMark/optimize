@@ -29,11 +29,11 @@ export const PreviewMessage = ({
             "flex gap-4 w-full rounded-xl",
             message.role === "user" ? "justify-start" : "justify-end",
             message.role === "user"
-              ? "bg-orange-300 dark:bg-orange-500 px-3 py-2 w-fit max-w-4xl"
+              ? "bg-zinc-300 dark:bg-zinc-600 !text-base px-3 py-2 w-fit max-w-4xl"
               : ""
           )}
         >
-          {message.role === "assistant" && <Icon.Optimize />}
+          {/* {message.role === "assistant" && <Icon.Optimize />} */}
           <div className="flex flex-col gap-2 w-full">
             {message.reasoning && (
               <MessageReasoning
