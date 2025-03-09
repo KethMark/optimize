@@ -14,7 +14,7 @@ import cx from "classnames";
 import { useEffect, useRef } from "react";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { useChat, Message } from "ai/react";
+import { Message, useChat } from '@ai-sdk/react';
 import type {
   ToolbarSlot,
   TransformToolbarSlot,
@@ -104,6 +104,7 @@ export const ChatInterface = ({ document }: documents) => {
     initialMessages: conversation || [],
     onError: (err) => {
       console.log(err.message);
+      console.log("Im failing");
     },
   });
 
@@ -175,17 +176,16 @@ export const ChatInterface = ({ document }: documents) => {
         >
           {messages.length === 0 && (
             <motion.div
-              key='logo'
+              key="logo"
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ delay: 0.5 }}
+              className="flex flex-1 justify-center items-center"
             >
-              <div className="mx-auto max-w-xl lg:mt-6">
-                <div className="flex flex-col items-center h-[calc(50vh-4rem)] justify-center gap-4">
-                  <Icon.Optimize className="size-16"/>
-                  <p className="text-4xl font-semibold">Optimize</p>
-                </div>
+              <div className="flex flex-col items-center gap-2">
+                <Icon.Optimize className="size-16" />
+                <p className="text-4xl font-semibold">Optimize</p>
               </div>
             </motion.div>
           )}
@@ -274,7 +274,7 @@ export const ChatInterface = ({ document }: documents) => {
 
             <div className="absolute bottom-0 p-3 w-fit flex flex-row justify-start">
               <p className="text-muted-foreground text-sm">
-                llama-3.3-70b
+                llama-3.3-70b-versatile
               </p>
             </div>
 

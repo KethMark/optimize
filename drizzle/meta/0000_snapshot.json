@@ -1,5 +1,5 @@
 {
-  "id": "763effe3-99e1-44d7-98c5-8128029ac9dc",
+  "id": "140917c8-c938-4889-b288-c9976edb0215",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -194,7 +194,7 @@
               "isExpression": false,
               "asc": true,
               "nulls": "last",
-              "opclass": "vector_cosine_ops"
+              "opclass": "vector_ip_ops"
             }
           ],
           "isUnique": false,

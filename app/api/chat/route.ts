@@ -1,12 +1,28 @@
 import { wrappedLanguageModel } from "@/ai/index";
 import { db } from "@/db/index";
 import { conversations } from "@/db/schema";
-import { convertToCoreMessages, streamText } from "ai"
+import { convertToCoreMessages, smoothStream, streamText  } from "ai"
 import { eq } from "drizzle-orm";
 // import { Ratelimit } from "@upstash/ratelimit"
 // import { Redis } from "@upstash/redis"
 
 export const maxDuration = 30
+
+export function errorHandler(error: unknown) {
+  if (error == null) {
+    return 'unknown error';
+  }
+
+  if (typeof error === 'string') {
+    return error;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  return JSON.stringify(error);
+}
 
 
 export async function POST(req: Request) {
@@ -30,6 +46,7 @@ export async function POST(req: Request) {
       Don't make any response that are not related in the documents, instead Just make a suggestion that are related only in the documents. 
       Don't share any information/insight that are not related documents.
     `,
+    experimental_transform: smoothStream(),
     messages: convertToCoreMessages(messages),
     experimental_providerMetadata: {
       files: {
@@ -71,5 +88,9 @@ export async function POST(req: Request) {
     },
   });
 
-  return result.toDataStreamResponse();
+  result.consumeStream();
+
+  return result.toDataStreamResponse({
+    getErrorMessage: errorHandler
+  });
 }

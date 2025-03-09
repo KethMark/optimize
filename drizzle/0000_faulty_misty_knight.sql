@@ -59,4 +59,4 @@ ALTER TABLE "conversations" ADD CONSTRAINT "conversations_file_storage_id_file_s
 ALTER TABLE "documents" ADD CONSTRAINT "documents_file_storage_id_file_storage_id_fk" FOREIGN KEY ("file_storage_id") REFERENCES "public"."file_storage"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "file_storage" ADD CONSTRAINT "file_storage_users_id_user_id_fk" FOREIGN KEY ("users_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_userId_user_id_fk" FOREIGN KEY ("userId") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "embeddingIndex" ON "documents" USING hnsw ("embedding" vector_cosine_ops);
+CREATE INDEX "embeddingIndex" ON "documents" USING hnsw ("embedding" vector_ip_ops);
