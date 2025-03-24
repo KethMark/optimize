@@ -1,12 +1,8 @@
 import { db } from "@/db/index";
 import { documents } from "@/db/schema";
-import { desc, eq, gt, sql, and, innerProduct } from "drizzle-orm";
+import { desc, eq, gt, sql, and, cosineDistance } from "drizzle-orm";
 import { groq } from "@ai-sdk/groq";
-import {
-  generateObject,
-  generateText,
-  LanguageModelV1Middleware,
-} from "ai";
+import { generateObject, generateText, LanguageModelV1Middleware } from "ai";
 import { z } from "zod";
 import { pipeline } from "@xenova/transformers";
 
@@ -43,7 +39,7 @@ export const Middleware: LanguageModelV1Middleware = {
       .join("\n");
 
     const { object: classification } = await generateObject({
-      model: groq("llama-3.3-70b-versatile"),
+      model: groq("gemma2-9b-it"),
       output: "enum",
       enum: ["question", "statement", "other"],
       system: "classify the user message as a question, statement, or other",
@@ -56,26 +52,27 @@ export const Middleware: LanguageModelV1Middleware = {
       return params;
     }
 
-    const { text: hypotheticalAnswer } = await generateText({
-      model: groq("llama-3.3-70b-versatile"),
-      system: "Answer the user question:",
-      prompt: lastUserMessageContent,
-    });
+    // const { text: hypotheticalAnswer } = await generateText({
+    //   model: groq("gemma2-9b-it"),
+    //   system: "Answer the user question:",
+    //   prompt: lastUserMessageContent,
+    // });
+    // console.log('Hypothetical Answer:', hypotheticalAnswer)
 
     const pipe = await pipeline("feature-extraction", "Supabase/gte-small");
 
-    const output = await pipe(hypotheticalAnswer, {
+    const output = await pipe(lastUserMessageContent, {
       pooling: "mean",
       normalize: true,
     });
 
     const hypotheticalAnswerEmbedding = Array.from(output.data);
 
-    const similarity = sql<number>`(${innerProduct(
-      documents.embedding,
+    const similarity = sql<number>`1 - (${cosineDistance(
+      documents.embedding, 
       hypotheticalAnswerEmbedding
-    )}) * -1`;
-
+    )})`;
+    
     const similarGuides = await db
       .select({ name: documents.content, similarity })
       .from(documents)

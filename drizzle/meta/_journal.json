@@ -8,6 +8,27 @@
       "when": 1741358204993,
       "tag": "0000_faulty_misty_knight",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1742655968780,
+      "tag": "0001_romantic_patch",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1742736608470,
+      "tag": "0002_loving_talos",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1742821267531,
+      "tag": "0003_young_retro_girl",
+      "breakpoints": true
     }
   ]
 }

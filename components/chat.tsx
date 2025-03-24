@@ -84,7 +84,7 @@ export const ChatInterface = ({ document }: documents) => {
         return [];
       }
     },
-    retry: false,
+    // retry: false,
   });
 
   const {
@@ -101,7 +101,7 @@ export const ChatInterface = ({ document }: documents) => {
     body: {
       chatId,
     },
-    initialMessages: conversation || [],
+    initialMessages: conversation,
     onError: (err) => {
       console.log(err.message);
       console.log("Im failing");

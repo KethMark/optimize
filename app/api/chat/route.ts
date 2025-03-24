@@ -1,19 +1,19 @@
 import { wrappedLanguageModel } from "@/ai/index";
 import { db } from "@/db/index";
 import { conversations } from "@/db/schema";
-import { convertToCoreMessages, smoothStream, streamText  } from "ai"
+import { convertToCoreMessages, smoothStream, streamText, appendResponseMessages  } from "ai"
 import { eq } from "drizzle-orm";
 // import { Ratelimit } from "@upstash/ratelimit"
 // import { Redis } from "@upstash/redis"
 
-export const maxDuration = 30
+export const maxDuration = 30;
 
 export function errorHandler(error: unknown) {
   if (error == null) {
-    return 'unknown error';
+    return "unknown error";
   }
 
-  if (typeof error === 'string') {
+  if (typeof error === "string") {
     return error;
   }
 
@@ -23,7 +23,6 @@ export function errorHandler(error: unknown) {
 
   return JSON.stringify(error);
 }
-
 
 export async function POST(req: Request) {
   const { messages, chatId } = await req.json();
@@ -53,7 +52,7 @@ export async function POST(req: Request) {
         chatId: chatId,
       },
     },
-    onFinish: async ({ text }) => {
+    onFinish: async ({ response }) => {
       const activeFile = await db
         .select()
         .from(conversations)
@@ -63,23 +62,23 @@ export async function POST(req: Request) {
         await db
           .update(conversations)
           .set({
-            content: JSON.stringify([
-              ...messages,
-              { role: "assistant", content: text },
-            ]),
+            content: appendResponseMessages({
+              messages,
+              responseMessages: response.messages
+            }),
           })
           .where(eq(conversations.file_storage, chatId));
       } else {
         await db
           .insert(conversations)
           .values({
-            createdAt: new Date(),
-            content: JSON.stringify([
-              ...messages,
-              { role: "assistant", content: text },
-            ]),
+          createdAt: new Date(),
+            content: appendResponseMessages({
+              messages,
+              responseMessages: response.messages
+            }),
             file_storage: chatId,
-          });
+        });
       }
     },
     experimental_telemetry: {

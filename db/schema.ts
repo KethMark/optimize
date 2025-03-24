@@ -99,7 +99,7 @@ export const documents = pgTable(
   (table) => ({
     embeddingIndex: index("embeddingIndex").using(
       "hnsw",
-      table.embedding.op("vector_ip_ops")
+      table.embedding.op("vector_cosine_ops")
     ),
   })
 );
