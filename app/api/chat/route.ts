@@ -8,22 +8,6 @@ import { eq } from "drizzle-orm";
 
 export const maxDuration = 30;
 
-export function errorHandler(error: unknown) {
-  if (error == null) {
-    return "unknown error";
-  }
-
-  if (typeof error === "string") {
-    return error;
-  }
-
-  if (error instanceof Error) {
-    return error.message;
-  }
-
-  return JSON.stringify(error);
-}
-
 export async function POST(req: Request) {
   const { messages, chatId } = await req.json();
 
@@ -90,6 +74,20 @@ export async function POST(req: Request) {
   result.consumeStream();
 
   return result.toDataStreamResponse({
-    getErrorMessage: errorHandler
+    getErrorMessage: error => {
+      if (error == null) {
+        return 'unknown error';
+      }
+
+      if (typeof error === 'string') {
+        return error;
+      }
+
+      if (error instanceof Error) {
+        return error.message;
+      }
+
+      return JSON.stringify(error);
+    },
   });
 }
