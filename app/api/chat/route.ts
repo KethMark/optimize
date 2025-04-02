@@ -1,8 +1,14 @@
 import { wrappedLanguageModel } from "@/ai/index";
 import { db } from "@/db/index";
 import { conversations } from "@/db/schema";
+import { getMostRecentUserMessage, getTrailingMessageId } from "@/lib/utils";
 import { groq } from "@ai-sdk/groq";
-import { convertToCoreMessages, smoothStream, streamText, appendResponseMessages  } from "ai"
+import {
+  convertToCoreMessages,
+  smoothStream,
+  streamText,
+  appendResponseMessages,
+} from "ai";
 import { eq } from "drizzle-orm";
 // import { Ratelimit } from "@upstash/ratelimit"
 // import { Redis } from "@upstash/redis"
@@ -22,6 +28,20 @@ export async function POST(req: Request) {
   // if (!success) {
   //   return new Response('You have reached your request limit', {status: 429});
   // }
+
+  const userMessage = getMostRecentUserMessage(messages);
+
+  if (!userMessage) {
+    return new Response("No user message found", { status: 400 });
+  }
+
+  await db.insert(conversations).values({
+    id: userMessage.id,
+    parts: userMessage.parts,
+    file_storage: chatId,
+    role: "user",
+    createdAt: new Date(),
+  });
 
   const result = streamText({
     model: wrappedLanguageModel,
@@ -50,36 +70,31 @@ export async function POST(req: Request) {
       },
     },
     onFinish: async ({ response }) => {
-      const activeFile = await db
-        .select()
-        .from(conversations)
-        .where(eq(conversations.file_storage, chatId));
 
-      const [, assistantMessage ] = appendResponseMessages({
-        messages,
-        responseMessages: response.messages
-      })
+      const assistantId = getTrailingMessageId({
+        messages: response.messages.filter(
+          (message) => message.role === "assistant"
+        ),
+      });
 
-      if (activeFile.length > 0) {
-        await db
-          .update(conversations)
-          .set({
-            content: appendResponseMessages({
-              messages,
-              responseMessages: response.messages
-            }),
-          })
-          .where(eq(conversations.file_storage, chatId));
-      } else {
-        await db
-          .insert(conversations)
-          .values({
-          createdAt: new Date(),
-            role: assistantMessage.role,
-            content: assistantMessage.content,
-            file_storage: chatId,
-        });
+      if (!assistantId) {
+        throw new Error("No assistant message found!");
       }
+
+      const [, assistantMessage] = appendResponseMessages({
+        messages: [userMessage],
+        responseMessages: response.messages,
+      });
+
+      await db
+        .insert(conversations)
+        .values({
+          createdAt: new Date(),
+          id: assistantId,
+          role: assistantMessage.role,
+          parts: assistantMessage.parts,
+          file_storage: chatId,
+      });
     },
     experimental_telemetry: {
       isEnabled: true,
@@ -90,12 +105,12 @@ export async function POST(req: Request) {
   result.consumeStream();
 
   return result.toDataStreamResponse({
-    getErrorMessage: error => {
+    getErrorMessage: (error) => {
       if (error == null) {
-        return 'unknown error';
+        return "unknown error";
       }
 
-      if (typeof error === 'string') {
+      if (typeof error === "string") {
         return error;
       }
 

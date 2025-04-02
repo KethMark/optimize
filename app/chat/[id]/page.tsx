@@ -8,7 +8,9 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { db } from "@/db/index";
-import { fileStorage ,users } from "@/db/schema";
+import { getMessagesByChatId } from "@/db/queries";
+import { DBMessage, fileStorage ,users } from "@/db/schema";
+import { UIMessage } from "ai";
 import { and, eq } from "drizzle-orm";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -32,6 +34,23 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
 
   const documents = document[0]
 
+  const messageFromDb = await getMessagesByChatId({
+    id
+  })
+
+  function convertToUIMessages(messages: Array<DBMessage>): Array<UIMessage> {
+    return messages.map((message) => {
+      const textContent = Array.isArray(message.parts) ? message.parts[0]?.text || '' : '';
+      return {
+        id: message.id,
+        parts: message.parts as UIMessage['parts'],
+        role: message.role as UIMessage['role'],
+        content: textContent, // Fill content with the text value
+        createdAt: message.createdAt ?? undefined
+      };
+    });
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar chatId={id} />
@@ -50,7 +69,10 @@ const page = async ({ params }: { params: Promise<{ id: string }> }) => {
           </div>
         </header>
         <div className="flex flex-col gap-4 p-4 pt-0 ">
-          <ChatInterface document={documents} />
+          <ChatInterface 
+            document={documents} 
+            initialMessages={convertToUIMessages(messageFromDb)}
+          />
         </div>
       </SidebarInset>
     </SidebarProvider>

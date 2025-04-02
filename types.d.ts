@@ -25,6 +25,7 @@ interface FileStorageSearch {
 
 interface documents {
   document: Documents;
+  initialMessages: Array<UIMessage>
 }
 
 interface DeletePDF  {

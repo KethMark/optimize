@@ -1,4 +1,5 @@
 import { generateId } from "ai";
+import { InferSelectModel } from "drizzle-orm";
 import {
   index,
   json,
@@ -80,9 +81,11 @@ export const conversations = pgTable("conversations", {
     () => fileStorage.id
   ),
   role: varchar('role').notNull(),
-  content: json("content").notNull(),
+  parts: json('parts').notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
+
+export type DBMessage = InferSelectModel<typeof conversations>;
 
 export const documents = pgTable(
   "documents",

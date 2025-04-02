@@ -12,9 +12,7 @@ import {
 } from "lucide-react";
 import cx from "classnames";
 import { useEffect, useRef } from "react";
-import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
-import { Message, useChat } from '@ai-sdk/react';
+import { useChat } from '@ai-sdk/react';
 import type {
   ToolbarSlot,
   TransformToolbarSlot,
@@ -49,7 +47,7 @@ const suggestedActions = [
   },
 ];
 
-export const ChatInterface = ({ document }: documents) => {
+export const ChatInterface = ({ document, initialMessages }: documents) => {
   const chatId = document.id;
   const pdfUrl = document.fileUrl;
 
@@ -71,22 +69,6 @@ export const ChatInterface = ({ document }: documents) => {
   const [messagesContainerRef, messagesEndRef] =
     useScrollToBottom<HTMLDivElement>();
 
-  const { data: conversation } = useQuery<Message[]>({
-    queryKey: ["chat", chatId],
-    queryFn: async () => {
-      try {
-        const response = await axios.post<Message[]>("/api/conversation", {
-          chatId,
-        });
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching conversation:", error);
-        return [];
-      }
-    },
-    retry: false, 
-  });
-
   const {
     messages,
     input,
@@ -98,10 +80,11 @@ export const ChatInterface = ({ document }: documents) => {
     append,
     setInput,
   } = useChat({
+    sendExtraMessageFields: true,
     body: {
       chatId,
     },
-    initialMessages: conversation,
+    initialMessages,
     onError: (err) => {
       console.log(err.message);
       console.log("Im failing");

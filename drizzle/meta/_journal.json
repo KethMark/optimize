@@ -50,6 +50,13 @@
       "when": 1743480313632,
       "tag": "0006_remarkable_patriot",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1743582315561,
+      "tag": "0007_slow_franklin_storm",
+      "breakpoints": true
     }
   ]
 }
