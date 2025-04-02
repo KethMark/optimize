@@ -79,6 +79,7 @@ export const conversations = pgTable("conversations", {
   file_storage: varchar("file_storage_id", { length: 191 }).references(
     () => fileStorage.id
   ),
+  role: varchar('role').notNull(),
   content: json("content").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -96,10 +97,10 @@ export const documents = pgTable(
     embedding: vector("embedding", { dimensions: 384 }),
     createdAt: timestamp("created_at").defaultNow(),
   },
-  (table) => ({
-    embeddingIndex: index("embeddingIndex").using(
+  (table) => [
+    index("embeddingIndex").using(
       "hnsw",
       table.embedding.op("vector_cosine_ops")
     ),
-  })
+  ]
 );

@@ -6,9 +6,9 @@ import {
   ArrowUp,
   BarChart2,
   BookOpen,
-  CircleStop,
   Info,
   RotateCw,
+  Square,
 } from "lucide-react";
 import cx from "classnames";
 import { useEffect, useRef } from "react";
@@ -84,7 +84,7 @@ export const ChatInterface = ({ document }: documents) => {
         return [];
       }
     },
-    // retry: false,
+    retry: false, 
   });
 
   const {
@@ -294,7 +294,7 @@ export const ChatInterface = ({ document }: documents) => {
                     stop();
                   }}
                 >
-                  <CircleStop />
+                  <Square />
                 </Button>
               ) : error ? (
                 <Button

@@ -59,7 +59,7 @@ export async function POST(req: Request) {
 
   const embedding = Array.from(output.data);
 
-  console.log("I'm done embeddings", embedding)
+  // console.log("I'm done embeddings", embedding)
 
   const document = chunks.map((e) => ({
     content: e,

@@ -10,7 +10,7 @@ export default function HeroImage() {
           <ThemedImage
             lightSrc="/optimize.png"
             darkSrc="/optimize-dark.png"
-            alt="A preview of the Database web app"
+            alt="Optimize"
             width={2400}
             height={1600}
             className="rounded-xl shadow-2xl dark:shadow-indigo-600/10"

@@ -30,7 +30,7 @@ export const Uploads = () => {
     const formData = new FormData();
     formData.append("cacheControl", "3600");
     formData.append("file", blob);
-
+    
     const controller = new AbortController();
     setAbortController(controller);
     return axios
@@ -90,8 +90,8 @@ export const Uploads = () => {
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     for (const file of acceptedFiles) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("Uploaded file exceeds maximum size of 1 MB");
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error("Uploaded file exceeds maximum size of 2 MB");
         continue;
       }
       setUploadFileName(file.name);
@@ -144,7 +144,7 @@ export const Uploads = () => {
             <p className="pl-1">to upload</p>
           </div>
           <p className="text-center leading-5 text-tremor-content dark:text-dark-tremor-content">
-            PDF up to 5MB
+            PDF up to 2MB
           </p>
         </div>
       </div>

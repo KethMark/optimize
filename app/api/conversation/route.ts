@@ -1,5 +1,6 @@
 import { db } from "@/db/index";
 import { conversations } from "@/db/schema";
+import { UIMessage } from "ai";
 import { desc, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 
@@ -9,17 +10,25 @@ export async function POST(req: Request) {
   if (!chatId) {
     return NextResponse.json({ error: "ChatId is missing" });
   }
-
-  const [conversation] = await db
-    .select({content: conversations.content})
+  
+  const conversation = await db
+    .select()
     .from(conversations)
     .where(eq(conversations.file_storage, chatId))
     .orderBy(desc(conversations.createdAt))
-    .limit(1)
 
-    if(!conversation) {
+    if(!conversation.length) {
       return NextResponse.json([])
     }
 
-    return NextResponse.json(conversation.content)
+    const initialMessage = conversation.map((message) => ({
+      id: message.id,
+      content: message.content as UIMessage['content'],
+      role: message.role as UIMessage['role'],
+      createdAt: message.createdAt
+    }))
+
+    console.log('InitialMessage:', initialMessage)
+
+    return NextResponse.json(initialMessage)
 }

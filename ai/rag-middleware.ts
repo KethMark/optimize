@@ -88,7 +88,7 @@ export const Middleware: LanguageModelV1Middleware = {
         ...recentMessage.content,
         {
           type: "text",
-          text: "Here is some relevant information that you can only use to answer the specific question:",
+          text: "Here is some relevant information from my knowledge base to help answer your question:",
         },
         ...similarGuides.map((document) => ({
           type: "text" as const,
@@ -97,9 +97,13 @@ export const Middleware: LanguageModelV1Middleware = {
         {
           type: "text",
           text: `
-            If no relevant answer documents are found, Try to respond accurately without sensitive information that are related only in the documents.
-            Don't make any response that are not related in the documents or else you are being ask to include the information in your document knowledge.
-            If no related answer in the document or you are not being ask to include the information in your current knowledge, just response: "Try any different related question."
+            Based on these documents and the content they contain:
+            
+            1. I'll provide a direct answer if the information is found in these documents.
+            2. I can make suggestions or provide additional context that's directly related to the concepts, topics, or themes in these documents.
+            3. If your question isn't covered in these documents, I'll suggest related topics from the documents that might be helpful.
+            4. If you specifically ask me to incorporate my broader knowledge along with document information, I can do so as long as it's relevant to the document themes.
+            5. For questions completely unrelated or no relevant information to the documents, I'll respond with: "I don't have specific information about that in my knowledge base. Would you like to know about [related document topics] instead?"
           `,
         },
       ],

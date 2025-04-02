@@ -29,6 +29,27 @@
       "when": 1742821267531,
       "tag": "0003_young_retro_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1742908991955,
+      "tag": "0004_sweet_echo",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1743250064349,
+      "tag": "0005_nervous_morbius",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1743480313632,
+      "tag": "0006_remarkable_patriot",
+      "breakpoints": true
     }
   ]
 }
